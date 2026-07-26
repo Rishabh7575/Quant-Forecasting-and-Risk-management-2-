@@ -1,101 +1,67 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import os
+"""
+Data Preprocessing Module.
 
-def load_and_preprocess(raw_filepath, processed_filepath):
+This module handles loading the raw transaction data, performing diagnostic
+checks (missing values, duplicates, memory usage), and saving a cleaned copy
+without applying any transformations.
+"""
+
+import os
+import pandas as pd
+from src import config
+from src.utils import setup_logger, load_dataset, print_dataset_summary
+
+def preprocess_pipeline(raw_path: str, processed_path: str) -> pd.DataFrame:
     """
-    Load raw data, perform basic exploration, clean, and save to processed directory.
+    Run the data loading, summarization, and cleaning pipeline.
+    
+    This function reads the raw transaction dataset, performs basic profiling,
+    drops duplicate rows (if any), drops rows with missing values (if any),
+    and saves the cleaned copy into the processed data directory.
+    
+    Args:
+        raw_path (str): Path to the raw transactions CSV file.
+        processed_path (str): Path to save the cleaned transactions CSV file.
+        
+    Returns:
+        pd.DataFrame: Cleaned pandas DataFrame.
     """
-    print("--- 1. Loading Dataset ---")
-    df = pd.read_csv(raw_filepath)
+    logger = setup_logger("data_preprocessing")
+    logger.info("Initializing Data Preprocessing Pipeline...")
     
-    print("\n--- 2. Dataset Shape ---")
-    print(df.shape)
+    # 1. Load the dataset
+    df = load_dataset(raw_path, logger)
     
-    print("\n--- 3. Column Names ---")
-    print(df.columns.tolist())
+    # 2. Print and log dataset summary
+    logger.info("Generating dataset diagnostic summary...")
+    print_dataset_summary(df, logger)
     
-    print("\n--- 4. Data Types ---")
-    print(df.dtypes)
-    
-    print("\n--- 5. Missing Values ---")
-    # TotalCharges is often read as object because of blank spaces
-    # We will convert it to numeric to properly check missing values
-    df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
-    print(df.isnull().sum())
-    
-    print("\n--- 6. Duplicate Rows ---")
-    duplicates = df.duplicated().sum()
-    print(f"Number of duplicate rows: {duplicates}")
-    
-    print("\n--- 7. Basic Statistics ---")
-    print(df.describe(include='all'))
-    
-    # Handle the missing values (drop them for now as they are very few)
-    df_clean = df.dropna().copy()
-    
-    # Save cleaned output
-    os.makedirs(os.path.dirname(processed_filepath), exist_ok=True)
-    df_clean.to_csv(processed_filepath, index=False)
-    print(f"\nSaved cleaned dataset to {processed_filepath}")
+    # 3. Perform basic cleaning (duplicates & missing values)
+    # Check for missing values
+    missing_count = df.isnull().sum().sum()
+    if missing_count > 0:
+        logger.warning(f"Found {missing_count} missing values in the dataset. Dropping missing values...")
+        df_clean = df.dropna().copy()
+    else:
+        logger.info("No missing values found in the dataset.")
+        df_clean = df.copy()
+        
+    # Check for duplicate rows
+    duplicate_count = df_clean.duplicated().sum()
+    if duplicate_count > 0:
+        logger.warning(f"Found {duplicate_count} duplicate rows. Dropping duplicates...")
+        df_clean = df_clean.drop_duplicates().copy()
+    else:
+        logger.info("No duplicate rows found in the dataset.")
+        
+    # 4. Save cleaned copy (without feature transformations)
+    logger.info(f"Saving cleaned dataset (Shape: {df_clean.shape}) to: {processed_path}")
+    os.makedirs(os.path.dirname(processed_path), exist_ok=True)
+    df_clean.to_csv(processed_path, index=False)
+    logger.info("Data Preprocessing Pipeline completed successfully.")
     
     return df_clean
 
-def create_visualizations(df, figures_dir):
-    """
-    Generate required visualizations and save them.
-    """
-    os.makedirs(figures_dir, exist_ok=True)
-    sns.set_theme(style="whitegrid")
-    
-    # 1. Churn distribution count plot
-    plt.figure(figsize=(8, 6))
-    sns.countplot(x='Churn', data=df, palette='Set2')
-    plt.title('Churn Distribution')
-    plt.savefig(os.path.join(figures_dir, 'churn_distribution.png'))
-    plt.close()
-    
-    # 2. Gender vs Churn
-    plt.figure(figsize=(8, 6))
-    sns.countplot(x='gender', hue='Churn', data=df, palette='Set2')
-    plt.title('Gender vs Churn')
-    plt.savefig(os.path.join(figures_dir, 'gender_vs_churn.png'))
-    plt.close()
-    
-    # 3. Contract Type vs Churn
-    plt.figure(figsize=(8, 6))
-    sns.countplot(x='Contract', hue='Churn', data=df, palette='Set2')
-    plt.title('Contract Type vs Churn')
-    plt.savefig(os.path.join(figures_dir, 'contract_vs_churn.png'))
-    plt.close()
-    
-    # 4. Monthly Charges distribution
-    plt.figure(figsize=(8, 6))
-    sns.histplot(df['MonthlyCharges'], kde=True, bins=30, color='purple')
-    plt.title('Monthly Charges Distribution')
-    plt.savefig(os.path.join(figures_dir, 'monthly_charges_dist.png'))
-    plt.close()
-    
-    # 5. Tenure distribution
-    plt.figure(figsize=(8, 6))
-    sns.histplot(df['tenure'], kde=True, bins=30, color='teal')
-    plt.title('Tenure Distribution')
-    plt.savefig(os.path.join(figures_dir, 'tenure_dist.png'))
-    plt.close()
-    print(f"Saved 5 visualizations to {figures_dir}")
-
 if __name__ == "__main__":
-    # Define paths based on project structure
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    raw_data_path = os.path.join(base_dir, 'data', 'raw', 'Telco-Customer-Churn.csv')
-    processed_data_path = os.path.join(base_dir, 'data', 'processed', 'churn_clean.csv')
-    figures_path = os.path.join(base_dir, 'reports', 'figures')
-    
-    # Run the pipeline
-    if os.path.exists(raw_data_path):
-        clean_df = load_and_preprocess(raw_data_path, processed_data_path)
-        create_visualizations(clean_df, figures_path)
-    else:
-        print(f"Error: Dataset not found at {raw_data_path}. Please download it first.")
+    # If run as a standalone script, use path configurations from config.py
+    preprocess_pipeline(config.RAW_DATA_PATH, config.PROCESSED_DATA_PATH)

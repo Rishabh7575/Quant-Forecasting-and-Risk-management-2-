@@ -1,59 +1,85 @@
-# Customer Churn Prediction
+# Financial Transaction Risk & Anomaly Engine
 
 ## Project Overview
-This project aims to predict customer churn using machine learning techniques. By analyzing customer data, the model identifies customers who are at a high risk of leaving, allowing the business to take proactive measures to retain them.
-
-## Problem Statement
-Customer retention is crucial for the long-term success of any subscription-based or service-oriented business. Acquiring new customers is often more expensive than retaining existing ones. The objective of this project is to develop a predictive model that can accurately flag customers likely to churn based on historical usage, demographic, and behavioral data.
-
-## Dataset Description
-This project uses the **IBM Telco Customer Churn** dataset.
-* **Number of Rows:** 7,043 total customers.
-* **Number of Features:** 20 predictor features (including customer demographics, account information, and services signed up for).
-* **Target Variable:** `Churn` - A categorical variable indicating whether the customer left within the last month ('Yes' or 'No').
-
-## Tech Stack
-* **Language:** Python 3.10+
-* **Data Manipulation:** pandas, numpy
-* **Data Visualization:** matplotlib, seaborn
-* **Machine Learning:** scikit-learn
-* **Development Environment:** Jupyter Notebook
-* **Frontend Dashboard:** Next.js (React), Tailwind CSS
-* **API Backend:** FastAPI (planned)
+This repository contains a production-style Machine Learning pipeline for a **Financial Transaction Risk & Anomaly Engine**. The primary objective is to monitor incoming financial transactions, run diagnostics, and detect anomalous patterns or fraudulent transactions (e.g., extremely high amounts, transaction attempts at odd hours, or international locations inconsistent with typical user history).
 
 ## Folder Structure
 ```text
-Customer-Churn-Prediction/
+Customer-Churn-Prediction/     # Root repository directory (repurposed for Risk & Anomaly Engine)
 │
-├── api/                    # FastAPI backend for model serving
+├── api/                       # API backend for model serving (FastAPI)
+│   ├── main.py
+│   └── requirements.txt
+│
 ├── data/
-│   ├── raw/                # Immutable original data
-│   └── processed/          # Cleaned data ready for modeling
+│   ├── raw/                   # Raw immutable datasets (contains transactions.csv)
+│   └── processed/             # Cleaned datasets ready for training (contains transactions_clean.csv)
 │
-├── frontend/               # Next.js web application for dashboards
+├── logs/                      # Generated pipeline application logs
+│   └── pipeline.log
 │
-├── notebooks/              # Jupyter notebooks for EDA and prototyping
+├── src/                       # Pipeline source code
+│   ├── config.py              # Central configurations and constants
+│   ├── generate_synthetic_data.py  # Script to generate synthetic transaction data
+│   ├── data_preprocessing.py  # Loading, validating, and cleaning pipeline
+│   ├── utils.py               # Logger, loaders, and profiling summaries
+│   ├── train_model.py         # Model training script (placeholder)
+│   └── evaluate_model.py      # Model evaluation script (placeholder)
+│
+├── notebooks/                 # Prototype notebooks
 │   └── churn_analysis.ipynb
 │
-├── src/                    # Source code for the ML pipeline
-│   ├── data_preprocessing.py
-│   ├── train_model.py
-│   ├── evaluate_model.py
-│   └── utils.py
+├── reports/                   # System reports and diagnostic metrics
+│   └── figures/
 │
-├── models/                 # Trained and serialized models
-│
-├── reports/                # Generated analysis and reports
-│   └── figures/            # Generated graphics and figures
-│
-├── requirements.txt        # Python dependencies
-├── README.md               # Project documentation
-├── .gitignore              # Ignored files and folders
-└── main.py                 # Main entry point for the ML pipeline
+├── requirements.txt           # Main python dependencies
+│   └── main.py                # Pipeline entry point orchestrator
 ```
 
-## Future Improvements
-* Implement deep learning models (e.g., neural networks).
-* Connect the prediction pipeline to real-time data streams.
-* Enhance the Next.js dashboard with interactive D3.js or Recharts visualizations.
-* Containerize the application using Docker for easier deployment.
+## Dataset Description
+The engine operates on a financial transaction dataset (`transactions.csv`), featuring:
+* **Number of Rows:** 10,000 transactions.
+* **Columns / Features:**
+  * `transaction_id` (object): Unique alphanumeric identifier for each transaction.
+  * `customer_id` (object): Alphanumeric identifier of the transacting customer.
+  * `timestamp` (object): Date and time of the transaction (format: `%Y-%m-%d %H:%M:%S`).
+  * `amount` (float): Transaction value.
+  * `merchant_category` (object): Merchant business type (`online_retail`, `grocery`, `dining`, `travel`, `cash_withdrawal`, `transfer`).
+  * `location` (object): City and country of the transaction.
+  * `device_type` (object): Medium used (`mobile`, `web`, `pos`, `atm`).
+  * `is_anomaly` (int): Target variable (1 for anomaly/high risk, 0 for normal transactions).
+
+### Anomaly Signature Rules (1.5% baseline)
+Anomalies in this dataset are simulated using distinct threat/risk profiles:
+1. **High Value Spikes:** Large value transactions ($5,000 – $20,000) mapped to transfers or online retail.
+2. **Geographical Anomalies:** Transactions originating from international destinations (e.g. London, Paris, Tokyo) for domestically-based customer cards.
+3. **Odd Hours Behavior:** Large value card-present or transfer transactions initiated between 2:00 AM and 4:00 AM local time.
+
+## Tech Stack
+* **Programming Language:** Python 3.10+
+* **Data Manipulation & Processing:** pandas, numpy
+* **Visualization:** matplotlib, seaborn
+* **Machine Learning Environment:** scikit-learn
+* **APIs & Dashboards:** FastAPI, Next.js
+
+## Getting Started
+
+### 1. Prerequisites
+Install dependencies from the root directory:
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Generate Synthetic Data
+If the raw dataset is not present, generate it using the synthetic generator:
+```bash
+python src/generate_synthetic_data.py
+```
+This writes a new `transactions.csv` to `data/raw/`.
+
+### 3. Run Preprocessing Pipeline
+Execute the main entry point to validate data constraints, run diagnostics, and save a cleaned copy to `data/processed/`:
+```bash
+python main.py
+```
+Logs are printed to stdout and saved directly to `logs/pipeline.log`.
