@@ -1,0 +1,9 @@
+Feature Name,Data Type,Category,Description,Expected Business Meaning,Potential Importance,Planned Transformation
+transaction_id,string,identifier,Unique identifier for each transaction,Used for transaction level audit/indexing,Low,Drop from model features; use as index
+customer_id,string,identifier,Unique identifier for the customer,Enables customer-specific historical/rolling behavior grouping,Medium,Grouping key for aggregations; drop raw ID before model training
+timestamp,datetime,timestamp,Date and time when transaction occurred,Captures temporal patterns and velocity (e.g. night vs. day),High,Extract hour of day; day of week; hour elapsed since last transaction
+amount,float,numerical,Value of transaction in dollars,Primary financial indicator of fraud/outlier size,High,Log transform to handle positive skew; Standard scaling
+merchant_category,string,categorical,The retail category of the merchant,Captures risk profile of high-liquidity channels (e.g. transfer),High,One-hot encoding or Target encoding
+location,string,categorical,Geographical location of transaction,Helps flag unusual cross-border/international activity,High,Target encoding or Group into binary "is_international" feature
+device_type,string,categorical,Device used for the transaction,Differentiates remote vs. physical terminal swipe risk,High,One-hot encoding
+is_anomaly,integer,target,Binary target flag indicating anomaly/fraud status,Target variable representing transaction risk class,Critical,None (keep as label)

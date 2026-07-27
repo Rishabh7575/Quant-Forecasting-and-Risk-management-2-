@@ -83,3 +83,22 @@ Execute the main entry point to validate data constraints, run diagnostics, and 
 python main.py
 ```
 Logs are printed to stdout and saved directly to `logs/pipeline.log`.
+
+## Planned Feature Engineering Strategy
+
+To improve predictive signal and capture transaction context before model training, the following feature engineering roadmap is planned:
+
+### 1. Temporal Features (Time-Based)
+* **`hour_of_day` (Immediate)**: Extract the hour (0-23) from `timestamp`. Anomalous transactions frequently occur at odd hours (e.g., between 2:00 AM and 4:00 AM).
+* **`day_of_week` (Immediate)**: Extract the day of the week (0-6). Helps distinguish weekend vs. weekday spending habits.
+* **`is_weekend` (Later)**: Binary flag indicating if the transaction occurred on a weekend.
+
+### 2. Geographical & Channel Features
+* **`is_international` (Immediate)**: A binary flag (0 or 1) indicating if the location country is outside the US (e.g., UK, FR, JP, IN, AU). Cross-border transactions present higher anomaly rates.
+* **`device_risk_weight` (Later)**: A probability-based risk weight mapped to the transaction channel (Web and Mobile have higher risk profiles compared to POS swipes).
+
+### 3. Customer Transaction Velocity & History
+* **`customer_txn_count_30d` (Immediate)**: Cumulative count of transactions per customer to detect high-frequency card testing velocity.
+* **`customer_avg_amount_30d` (Immediate)**: Historical average transaction amount for the customer.
+* **`amount_ratio_to_avg` (Immediate)**: The ratio of the current transaction amount to the customer's 30-day average. A ratio significantly higher than 1.0 flags anomalous spend scaling.
+
