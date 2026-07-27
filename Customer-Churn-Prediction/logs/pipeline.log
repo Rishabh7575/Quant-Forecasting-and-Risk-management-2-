@@ -45,3 +45,34 @@
 2026-07-26 22:38:29,124 - main_pipeline - INFO - =========================================
 2026-07-26 22:38:29,124 - main_pipeline - INFO - Pipeline Step 1 (Preprocessing) completed successfully
 2026-07-26 22:38:29,124 - main_pipeline - INFO - =========================================
+2026-07-27 22:23:20,188 - data_preprocessing - INFO - ============================================================
+2026-07-27 22:23:20,188 - data_preprocessing - INFO - STARTING PREPROCESSING PIPELINE
+2026-07-27 22:23:20,188 - data_preprocessing - INFO - ============================================================
+2026-07-27 22:23:20,188 - data_preprocessing - INFO - Loading raw dataset from D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\raw\transactions.csv...
+2026-07-27 22:23:20,212 - data_preprocessing - INFO - Loaded dataset with shape (10000, 8)
+2026-07-27 22:23:20,224 - data_preprocessing - INFO - Checking for duplicate rows...
+2026-07-27 22:23:20,229 - data_preprocessing - INFO - No duplicate rows found.
+2026-07-27 22:23:20,229 - data_preprocessing - INFO - Checking for missing values...
+2026-07-27 22:23:20,233 - data_preprocessing - INFO - No missing values found.
+2026-07-27 22:23:20,233 - data_preprocessing - INFO - Validating and converting data types...
+2026-07-27 22:23:20,233 - data_preprocessing - INFO - Converting 'timestamp' to datetime...
+2026-07-27 22:23:20,251 - data_preprocessing - INFO - Ensuring 'amount' is float...
+2026-07-27 22:23:20,252 - data_preprocessing - INFO - Ensuring target 'is_anomaly' is integer...
+2026-07-27 22:23:20,254 - data_preprocessing - INFO - Data type validation and conversion completed.
+2026-07-27 22:23:20,254 - data_preprocessing - INFO - Standardizing categorical values (lowercasing & stripping whitespace)...
+2026-07-27 22:23:20,256 - data_preprocessing - INFO - Standardizing column: merchant_category
+2026-07-27 22:23:20,261 - data_preprocessing - INFO - Standardizing column: location
+2026-07-27 22:23:20,267 - data_preprocessing - INFO - Standardizing column: device_type
+2026-07-27 22:23:20,270 - data_preprocessing - INFO - Categorical standardization completed.
+2026-07-27 22:23:20,271 - data_preprocessing - INFO - Detecting invalid/unrealistic values...
+2026-07-27 22:23:20,273 - data_preprocessing - INFO - No invalid transaction amounts detected (all amounts > 0).
+2026-07-27 22:23:20,340 - data_preprocessing - INFO - Saved processed dataset to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\processed\transactions_clean.csv
+2026-07-27 22:23:20,341 - data_preprocessing - INFO - ============================================================
+2026-07-27 22:23:20,341 - data_preprocessing - INFO - PREPROCESSING PIPELINE SUMMARY
+2026-07-27 22:23:20,341 - data_preprocessing - INFO - ------------------------------------------------------------
+2026-07-27 22:23:20,341 - data_preprocessing - INFO - Original shape:       (10000, 8)
+2026-07-27 22:23:20,341 - data_preprocessing - INFO - Final shape:          (10000, 8)
+2026-07-27 22:23:20,341 - data_preprocessing - INFO - Duplicates removed:   0
+2026-07-27 22:23:20,342 - data_preprocessing - INFO - Missing values resolved: 0
+2026-07-27 22:23:20,342 - data_preprocessing - INFO - Invalid values removed: 0
+2026-07-27 22:23:20,342 - data_preprocessing - INFO - ============================================================
