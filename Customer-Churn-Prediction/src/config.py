@@ -25,6 +25,19 @@ SPLIT_DIMENSIONS_PATH = os.path.join(BASE_DIR, "data", "processed", "split_dimen
 # Preprocessor Saving Path
 PREPROCESSOR_PATH = os.path.join(BASE_DIR, "models", "preprocessor.joblib")
 
+# Model Saving Path (Baseline Logistic Regression)
+BASELINE_MODEL_PATH = os.path.join(BASE_DIR, "models", "baseline_logistic_regression.joblib")
+
+# Baseline Metrics & Predictions Paths
+BASELINE_METRICS_PATH = os.path.join(BASE_DIR, "reports", "baseline_metrics.json")
+BASELINE_PREDICTIONS_PATH = os.path.join(BASE_DIR, "data", "processed", "predictions_baseline.csv")
+
+# Baseline Figures Paths
+BASELINE_CONF_MATRIX_PATH = os.path.join(BASE_DIR, "reports", "figures", "baseline_confusion_matrix.png")
+BASELINE_ROC_CURVE_PATH = os.path.join(BASE_DIR, "reports", "figures", "baseline_roc_curve.png")
+BASELINE_PR_CURVE_PATH = os.path.join(BASE_DIR, "reports", "figures", "baseline_precision_recall_curve.png")
+
+
 # Reports & Figure Directories
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 FIGURES_DIR = os.path.join(REPORTS_DIR, "figures")

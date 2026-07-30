@@ -1,22 +1,36 @@
 """
 Model Training Module.
 
-This module contains logic for defining, compiling, and training
-machine learning models for customer churn prediction.
+This module contains logic for training a baseline Logistic Regression model
+for the Financial Transaction Risk & Anomaly Engine.
 """
 
-def train(X_train, y_train):
+import os
+import joblib
+from sklearn.linear_model import LogisticRegression
+from src import config
+from src.utils import setup_logger
+
+logger = setup_logger("train_model")
+
+def train(X_train, y_train, random_state: int = config.RANDOM_STATE) -> LogisticRegression:
     """
-    Train the machine learning model.
+    Train a baseline Logistic Regression classifier.
 
     Args:
         X_train: Training features.
         y_train: Training labels.
+        random_state (int): Seed for reproducibility.
 
     Returns:
-        None: Will return the trained model instance when implemented.
+        LogisticRegression: The trained model instance.
     """
-    pass
+    logger.info("Initializing and training baseline Logistic Regression model...")
+    # Use max_iter=1000 to ensure convergence on normalized features
+    model = LogisticRegression(random_state=random_state, max_iter=1000)
+    model.fit(X_train, y_train)
+    logger.info("Logistic Regression training completed successfully.")
+    return model
 
 def save_model(model, filepath: str):
     """
@@ -26,4 +40,7 @@ def save_model(model, filepath: str):
         model: The trained model instance.
         filepath (str): The destination path to save the model.
     """
-    pass
+    logger.info(f"Saving model object to: {filepath}")
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    joblib.dump(model, filepath)
+    logger.info("Model saved successfully.")
