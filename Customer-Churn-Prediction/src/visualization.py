@@ -6,6 +6,7 @@ including Confusion Matrices, ROC Curves, and Precision-Recall Curves.
 """
 
 import os
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, roc_curve, precision_recall_curve, auc, average_precision_score
@@ -129,3 +130,107 @@ def plot_precision_recall_curve(y_true, y_prob, filepath: str):
     plt.savefig(filepath, dpi=300)
     plt.close()
     logger.info("Precision-Recall Curve plot saved successfully.")
+
+def plot_comparison_metrics(df_comparison: pd.DataFrame, filepath: str):
+    """
+    Generate and save a grouped bar chart comparing multiple classification metrics
+    for Logistic Regression vs. Random Forest.
+
+    Args:
+        df_comparison (pd.DataFrame): Comparison metrics DataFrame.
+        filepath (str): Destination file path to save the bar chart.
+    """
+    logger.info(f"Generating metrics comparison bar chart at {filepath}...")
+    
+    # Melt wide DataFrame to long-form for seaborn
+    df_melted = df_comparison.melt(
+        id_vars="Model",
+        value_vars=["Accuracy", "Precision", "Recall", "F1-Score"],
+        var_name="Metric",
+        value_name="Score"
+    )
+    
+    plt.figure(figsize=(8, 6))
+    
+    # Plot using a cohesive color palette
+    ax = sns.barplot(
+        x="Metric", 
+        y="Score", 
+        hue="Model", 
+        data=df_melted, 
+        palette={"Logistic Regression": "#818CF8", "Random Forest": "#4F46E5"}
+    )
+    
+    # Style details
+    plt.title("Baseline Model Performance Comparison", pad=20, fontweight="bold")
+    plt.xlabel("Evaluation Metric", labelpad=10)
+    plt.ylabel("Score Value", labelpad=10)
+    plt.ylim([0, 1.1])  # Keep space for labels
+    plt.legend(title="Classifier", loc="lower right", frameon=True)
+    
+    # Annotate bar heights
+    for p in ax.patches:
+        height = p.get_height()
+        if pd.isna(height) or height == 0:
+            continue
+        ax.annotate(
+            f"{height:.2%}",
+            (p.get_x() + p.get_width() / 2., height),
+            ha='center', 
+            va='bottom', 
+            xytext=(0, 3), 
+            textcoords='offset points',
+            fontsize=9,
+            fontweight="bold"
+        )
+        
+    plt.tight_layout()
+    
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    plt.savefig(filepath, dpi=300)
+    plt.close()
+    logger.info("Metrics comparison bar chart saved successfully.")
+
+def plot_comparison_roc_curves(y_true, y_prob_lr, y_prob_rf, filepath: str):
+    """
+    Generate and save overlaid Receiver Operating Characteristic (ROC) Curves
+    comparing both models on a single figure.
+
+    Args:
+        y_true: Ground truth target labels.
+        y_prob_lr: Predicted anomaly probabilities for Logistic Regression.
+        y_prob_rf: Predicted anomaly probabilities for Random Forest.
+        filepath (str): Destination file path to save the ROC curve figure.
+    """
+    logger.info(f"Generating overlaid ROC curves at {filepath}...")
+    
+    plt.figure(figsize=(6, 5))
+    
+    # Plot Logistic Regression
+    if y_prob_lr is not None:
+        fpr_lr, tpr_lr, _ = roc_curve(y_true, y_prob_lr)
+        auc_lr = auc(fpr_lr, tpr_lr)
+        plt.plot(fpr_lr, tpr_lr, color="#818CF8", lw=2, label=f"Logistic Regression (AUC = {auc_lr:.4f})")
+        
+    # Plot Random Forest
+    if y_prob_rf is not None:
+        fpr_rf, tpr_rf, _ = roc_curve(y_true, y_prob_rf)
+        auc_rf = auc(fpr_rf, tpr_rf)
+        plt.plot(fpr_rf, tpr_rf, color="#4F46E5", lw=2.5, label=f"Random Forest (AUC = {auc_rf:.4f})")
+        
+    # Random guess baseline
+    plt.plot([0, 1], [0, 1], color="#EF4444", lw=1.5, linestyle="--", label="Random Guess (AUC = 0.5000)")
+    
+    plt.xlim([-0.02, 1.02])
+    plt.ylim([-0.02, 1.02])
+    plt.xlabel("False Positive Rate (FPR)", labelpad=10)
+    plt.ylabel("True Positive Rate (TPR)", labelpad=10)
+    plt.title("Receiver Operating Characteristic (ROC) Curve Comparison", pad=15, fontweight="bold")
+    plt.legend(loc="lower right", frameon=True)
+    plt.tight_layout()
+    
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    plt.savefig(filepath, dpi=300)
+    plt.close()
+    logger.info("Overlaid ROC curves saved successfully.")
+

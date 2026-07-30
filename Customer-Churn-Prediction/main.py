@@ -10,9 +10,15 @@ from src import config
 from src.utils import setup_logger, load_dataset
 from src.data_preprocessing import preprocess_pipeline, prepare_ml_dataset
 from src.feature_engineering import engineer_features
-from src.train_model import train, save_model
-from src.evaluate_model import evaluate, save_predictions, save_metrics
-from src.visualization import plot_confusion_matrix, plot_roc_curve, plot_precision_recall_curve
+from src.train_model import train, save_model, train_random_forest
+from src.evaluate_model import evaluate, save_predictions, save_metrics, compare_models
+from src.visualization import (
+    plot_confusion_matrix, 
+    plot_roc_curve, 
+    plot_precision_recall_curve,
+    plot_comparison_metrics,
+    plot_comparison_roc_curves
+)
 
 def main():
     """
@@ -47,33 +53,47 @@ def main():
         logger.info("Starting ML dataset preparation (scaling, encoding, splitting, saving)...")
         prepare_ml_dataset(df_feat)
         
-        # 5. Train Baseline Model
+        # 5. Train Baseline Logistic Regression Model
         logger.info("Loading prepared train/test splits for modeling...")
         X_train = load_dataset(config.X_TRAIN_PATH)
         X_test = load_dataset(config.X_TEST_PATH)
         y_train = load_dataset(config.y_TRAIN_PATH).iloc[:, 0]  # squeeze to 1D Series
         y_test = load_dataset(config.y_TEST_PATH).iloc[:, 0]
         
-        logger.info("Starting baseline model training...")
-        model = train(X_train, y_train)
-        save_model(model, config.BASELINE_MODEL_PATH)
+        logger.info("Starting baseline Logistic Regression model training...")
+        lr_model = train(X_train, y_train)
+        save_model(lr_model, config.BASELINE_MODEL_PATH)
         
-        # 6. Evaluate Baseline Model
-        logger.info("Starting baseline model evaluation...")
-        metrics, y_pred, y_prob = evaluate(model, X_test, y_test)
+        # Evaluate Logistic Regression
+        logger.info("Evaluating baseline Logistic Regression model...")
+        metrics_lr, y_pred_lr, y_prob_lr = evaluate(lr_model, X_test, y_test)
+        save_predictions(y_test, y_pred_lr, y_prob_lr, config.BASELINE_PREDICTIONS_PATH)
+        save_metrics(metrics_lr, config.BASELINE_METRICS_PATH)
+        plot_confusion_matrix(y_test, y_pred_lr, config.BASELINE_CONF_MATRIX_PATH)
+        plot_roc_curve(y_test, y_prob_lr, config.BASELINE_ROC_CURVE_PATH)
+        plot_precision_recall_curve(y_test, y_prob_lr, config.BASELINE_PR_CURVE_PATH)
         
-        # Save evaluation outputs
-        save_predictions(y_test, y_pred, y_prob, config.BASELINE_PREDICTIONS_PATH)
-        save_metrics(metrics, config.BASELINE_METRICS_PATH)
+        # 6. Train Random Forest Model
+        logger.info("Starting Random Forest model training...")
+        rf_model = train_random_forest(X_train, y_train)
+        save_model(rf_model, config.RF_MODEL_PATH)
         
-        # 7. Generate Visualizations
-        logger.info("Starting generation of evaluation plots...")
-        plot_confusion_matrix(y_test, y_pred, config.BASELINE_CONF_MATRIX_PATH)
-        plot_roc_curve(y_test, y_prob, config.BASELINE_ROC_CURVE_PATH)
-        plot_precision_recall_curve(y_test, y_prob, config.BASELINE_PR_CURVE_PATH)
+        # Evaluate Random Forest
+        logger.info("Evaluating Random Forest model...")
+        metrics_rf, y_pred_rf, y_prob_rf = evaluate(rf_model, X_test, y_test)
+        save_predictions(y_test, y_pred_rf, y_prob_rf, config.RF_PREDICTIONS_PATH)
+        save_metrics(metrics_rf, config.RF_METRICS_PATH)
+        
+        # 7. Model Comparison and Visualization
+        logger.info("Running model comparison...")
+        df_comparison = compare_models(metrics_lr, metrics_rf, config.COMPARISON_METRICS_PATH)
+        
+        logger.info("Generating model comparison visualizations...")
+        plot_comparison_metrics(df_comparison, config.COMPARISON_BAR_CHART_PATH)
+        plot_comparison_roc_curves(y_test, y_prob_lr, y_prob_rf, config.COMPARISON_ROC_CURVE_PATH)
         
         logger.info("=========================================")
-        logger.info("Pipeline Baseline Model Training & Evaluation completed successfully")
+        logger.info("Pipeline Baseline Models Training & Comparison completed successfully")
         logger.info("=========================================")
         
     except Exception as e:

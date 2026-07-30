@@ -110,3 +110,54 @@ def save_metrics(metrics: dict, filepath: str):
     with open(filepath, "w") as f:
         json.dump(metrics, f, indent=4)
     logger.info("Metrics report saved successfully.")
+
+def compare_models(metrics_lr: dict, metrics_rf: dict, filepath: str) -> pd.DataFrame:
+    """
+    Compare performance metrics of Logistic Regression and Random Forest models,
+    save the comparison as a CSV file, and log a formatted comparison table.
+
+    Args:
+        metrics_lr (dict): Evaluation metrics dictionary for Logistic Regression.
+        metrics_rf (dict): Evaluation metrics dictionary for Random Forest.
+        filepath (str): Destination path for CSV.
+
+    Returns:
+        pd.DataFrame: Comparison DataFrame.
+    """
+    logger.info("Comparing model performance metrics...")
+    
+    comparison_data = [
+        {
+            "Model": "Logistic Regression",
+            "Accuracy": metrics_lr["accuracy"],
+            "Precision": metrics_lr["precision"],
+            "Recall": metrics_lr["recall"],
+            "F1-Score": metrics_lr["f1_score"],
+            "ROC-AUC": metrics_lr["roc_auc"]
+        },
+        {
+            "Model": "Random Forest",
+            "Accuracy": metrics_rf["accuracy"],
+            "Precision": metrics_rf["precision"],
+            "Recall": metrics_rf["recall"],
+            "F1-Score": metrics_rf["f1_score"],
+            "ROC-AUC": metrics_rf["roc_auc"]
+        }
+    ]
+    
+    df_comparison = pd.DataFrame(comparison_data)
+    
+    # Save to disk
+    logger.info(f"Saving comparison metrics CSV to: {filepath}")
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    df_comparison.to_csv(filepath, index=False)
+    
+    # Log formatted table
+    logger.info("=========================================")
+    logger.info("MODEL COMPARISON SUMMARY")
+    logger.info("-----------------------------------------")
+    logger.info("\n" + df_comparison.to_string(index=False))
+    logger.info("=========================================")
+    
+    return df_comparison
+
