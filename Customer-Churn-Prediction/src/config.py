@@ -37,6 +37,17 @@ BASELINE_CONF_MATRIX_PATH = os.path.join(BASE_DIR, "reports", "figures", "baseli
 BASELINE_ROC_CURVE_PATH = os.path.join(BASE_DIR, "reports", "figures", "baseline_roc_curve.png")
 BASELINE_PR_CURVE_PATH = os.path.join(BASE_DIR, "reports", "figures", "baseline_precision_recall_curve.png")
 
+# Random Forest Model & Predictions Paths
+RF_MODEL_PATH = os.path.join(BASE_DIR, "models", "random_forest_baseline.joblib")
+RF_METRICS_PATH = os.path.join(BASE_DIR, "reports", "random_forest_metrics.json")
+RF_PREDICTIONS_PATH = os.path.join(BASE_DIR, "data", "processed", "predictions_rf.csv")
+
+# Comparison Output Paths
+COMPARISON_METRICS_PATH = os.path.join(BASE_DIR, "reports", "model_comparison_metrics.csv")
+COMPARISON_BAR_CHART_PATH = os.path.join(BASE_DIR, "reports", "figures", "comparison_metrics_bar_chart.png")
+COMPARISON_ROC_CURVE_PATH = os.path.join(BASE_DIR, "reports", "figures", "comparison_roc_curves.png")
+
+
 
 # Reports & Figure Directories
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")

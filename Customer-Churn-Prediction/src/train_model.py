@@ -8,6 +8,7 @@ for the Financial Transaction Risk & Anomaly Engine.
 import os
 import joblib
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from src import config
 from src.utils import setup_logger
 
@@ -31,6 +32,26 @@ def train(X_train, y_train, random_state: int = config.RANDOM_STATE) -> Logistic
     model.fit(X_train, y_train)
     logger.info("Logistic Regression training completed successfully.")
     return model
+
+def train_random_forest(X_train, y_train, random_state: int = config.RANDOM_STATE) -> RandomForestClassifier:
+    """
+    Train a baseline Random Forest classifier.
+
+    Args:
+        X_train: Training features.
+        y_train: Training labels.
+        random_state (int): Seed for reproducibility.
+
+    Returns:
+        RandomForestClassifier: The trained model instance.
+    """
+    logger.info("Initializing and training baseline Random Forest model...")
+    # Use standard default parameters (n_estimators=100) and fixed random_state
+    model = RandomForestClassifier(n_estimators=100, random_state=random_state)
+    model.fit(X_train, y_train)
+    logger.info("Random Forest training completed successfully.")
+    return model
+
 
 def save_model(model, filepath: str):
     """
