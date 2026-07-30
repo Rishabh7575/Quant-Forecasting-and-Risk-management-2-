@@ -50,24 +50,20 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     # 3. Customer Transaction Velocity & History (30-day rolling metrics)
     logger.info("Engineering customer transaction velocity and historical features...")
     
-    # Create rolling group by customer_id over a 30-day lookback window
-    rolling_group = df_feat.groupby("customer_id").rolling("30D", on="timestamp")
+    # Initialize the columns to default values
+    df_feat["customer_txn_count_30d"] = 1.0
+    df_feat["customer_avg_amount_30d"] = df_feat["amount"]
     
-    # Count of transactions in the last 30 days (including the current transaction)
-    df_feat["customer_txn_count_30d"] = (
-        rolling_group["transaction_id"]
-        .count()
-        .reset_index(level=0, drop=True)
-        .astype(float)
-    )
-    
-    # Average transaction amount in the last 30 days (including the current transaction)
-    df_feat["customer_avg_amount_30d"] = (
-        rolling_group["amount"]
-        .mean()
-        .reset_index(level=0, drop=True)
-        .astype(float)
-    )
+    # Compute rolling count and average amount per customer over a 30-day lookback window
+    for cust_id, group in df_feat.groupby("customer_id"):
+        # group is sorted because df_feat is sorted
+        temp = group.set_index("timestamp")
+        r_count = temp["transaction_id"].rolling("30D").count().values
+        r_mean = temp["amount"].rolling("30D").mean().values
+        
+        # Assign values back using original indices
+        df_feat.loc[group.index, "customer_txn_count_30d"] = r_count
+        df_feat.loc[group.index, "customer_avg_amount_30d"] = r_mean
     
     # 4. Ratio-based features
     # Ratio of current amount to 30-day rolling average

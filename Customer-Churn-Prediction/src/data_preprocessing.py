@@ -8,8 +8,13 @@ implemented as a separate, reusable function.
 
 import os
 import logging
+import json
 import pandas as pd
 import numpy as np
+import joblib
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
 from src import config
 from src.utils import setup_logger
 
@@ -252,6 +257,99 @@ def preprocess_pipeline(raw_path: str, processed_path: str) -> pd.DataFrame:
 
     return df_cleaned
 
+def prepare_ml_dataset(df: pd.DataFrame) -> None:
+    """
+    Split the dataset into stratified train/test sets, build and apply a
+    preprocessing ColumnTransformer pipeline, and save the split datasets, dimensions,
+    and preprocessor.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing engineered features and target.
+    """
+    logger.info("=" * 60)
+    logger.info("PREPARING MACHINE LEARNING DATASET & PREPROCESSING PIPELINE")
+    logger.info("=" * 60)
+
+    # 1. Separate Features (X) and Target (y)
+    y = df[config.TARGET_COLUMN]
+    feature_cols = config.ENGINEERED_NUMERIC_FEATURES + config.ENGINEERED_CATEGORICAL_FEATURES
+    X = df[feature_cols].copy()
+
+    logger.info(f"Target distribution:\n{y.value_counts(normalize=True)}")
+    logger.info(f"Features shape: {X.shape}")
+
+    # 2. Split the dataset: 80% train, 20% test (stratified, fixed random state)
+    X_train_raw, X_test_raw, y_train, y_test = train_test_split(
+        X, y,
+        test_size=0.2,
+        stratify=y,
+        random_state=config.RANDOM_STATE
+    )
+
+    logger.info(f"Train split shape: {X_train_raw.shape}, Test split shape: {X_test_raw.shape}")
+
+    # 3. Build scikit-learn preprocessing pipeline
+    # StandardScaler for numerical, OneHotEncoder for categorical
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("num", StandardScaler(), config.ENGINEERED_NUMERIC_FEATURES),
+            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), config.ENGINEERED_CATEGORICAL_FEATURES)
+        ]
+    )
+
+    # 4. Fit and transform
+    logger.info("Fitting ColumnTransformer on training split and transforming both splits...")
+    X_train_arr = preprocessor.fit_transform(X_train_raw)
+    X_test_arr = preprocessor.transform(X_test_raw)
+
+    # Reconstruct DataFrame with feature names for readability
+    cat_encoder = preprocessor.named_transformers_["cat"]
+    cat_feature_names = cat_encoder.get_feature_names_out(config.ENGINEERED_CATEGORICAL_FEATURES).tolist()
+    all_feature_names = config.ENGINEERED_NUMERIC_FEATURES + cat_feature_names
+
+    X_train_processed = pd.DataFrame(X_train_arr, columns=all_feature_names)
+    X_test_processed = pd.DataFrame(X_test_arr, columns=all_feature_names)
+
+    # 5. Save artifacts
+    logger.info("Saving split datasets to disk...")
+    os.makedirs(os.path.dirname(config.X_TRAIN_PATH), exist_ok=True)
+    X_train_processed.to_csv(config.X_TRAIN_PATH, index=False)
+    X_test_processed.to_csv(config.X_TEST_PATH, index=False)
+    y_train.to_csv(config.y_TRAIN_PATH, index=False)
+    y_test.to_csv(config.y_TEST_PATH, index=False)
+
+    # Save preprocessing object
+    logger.info(f"Saving preprocessor object to: {config.PREPROCESSOR_PATH}")
+    os.makedirs(os.path.dirname(config.PREPROCESSOR_PATH), exist_ok=True)
+    joblib.dump(preprocessor, config.PREPROCESSOR_PATH)
+
+    # Save train/test dimensions
+    dimensions = {
+        "X_train_shape": X_train_processed.shape,
+        "X_test_shape": X_test_processed.shape,
+        "y_train_shape": y_train.shape,
+        "y_test_shape": y_test.shape,
+        "y_train_anomaly_rate": float(y_train.mean()),
+        "y_test_anomaly_rate": float(y_test.mean())
+    }
+
+    logger.info(f"Saving split dimensions to: {config.SPLIT_DIMENSIONS_PATH}")
+    with open(config.SPLIT_DIMENSIONS_PATH, "w") as f:
+        json.dump(dimensions, f, indent=4)
+
+    logger.info("=" * 60)
+    logger.info("DATASET PREPARATION PIPELINE SUMMARY")
+    logger.info("-" * 60)
+    logger.info(f"X_train shape: {X_train_processed.shape}")
+    logger.info(f"X_test shape:  {X_test_processed.shape}")
+    logger.info(f"Train anomaly rate: {dimensions['y_train_anomaly_rate']:.4%}")
+    logger.info(f"Test anomaly rate:  {dimensions['y_test_anomaly_rate']:.4%}")
+    logger.info("=" * 60)
+
 if __name__ == "__main__":
-    # If run as standalone, load configurations from config
-    preprocess_pipeline(config.RAW_DATA_PATH, config.PROCESSED_DATA_PATH)
+    from src.feature_engineering import engineer_features
+    # Run full sequence locally for standalone execution
+    df_clean = preprocess_pipeline(config.RAW_DATA_PATH, config.PROCESSED_DATA_PATH)
+    df_feat = engineer_features(df_clean)
+    prepare_ml_dataset(df_feat)
+

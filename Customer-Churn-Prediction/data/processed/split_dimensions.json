@@ -1,0 +1,18 @@
+{
+    "X_train_shape": [
+        8000,
+        30
+    ],
+    "X_test_shape": [
+        2000,
+        30
+    ],
+    "y_train_shape": [
+        8000
+    ],
+    "y_test_shape": [
+        2000
+    ],
+    "y_train_anomaly_rate": 0.018625,
+    "y_test_anomaly_rate": 0.0185
+}
