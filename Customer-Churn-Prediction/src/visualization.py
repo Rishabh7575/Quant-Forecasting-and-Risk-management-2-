@@ -191,16 +191,17 @@ def plot_comparison_metrics(df_comparison: pd.DataFrame, filepath: str):
     plt.close()
     logger.info("Metrics comparison bar chart saved successfully.")
 
-def plot_comparison_roc_curves(y_true, y_prob_lr, y_prob_rf, filepath: str):
+def plot_comparison_roc_curves(y_true, y_prob_lr, y_prob_rf, filepath: str, y_prob_rf_tuned=None):
     """
     Generate and save overlaid Receiver Operating Characteristic (ROC) Curves
-    comparing both models on a single figure.
+    comparing classification thresholds across multiple model variants.
 
     Args:
         y_true: Ground truth target labels.
         y_prob_lr: Predicted anomaly probabilities for Logistic Regression.
-        y_prob_rf: Predicted anomaly probabilities for Random Forest.
+        y_prob_rf: Predicted anomaly probabilities for Baseline Random Forest.
         filepath (str): Destination file path to save the ROC curve figure.
+        y_prob_rf_tuned: Predicted anomaly probabilities for Tuned Random Forest (optional).
     """
     logger.info(f"Generating overlaid ROC curves at {filepath}...")
     
@@ -210,13 +211,20 @@ def plot_comparison_roc_curves(y_true, y_prob_lr, y_prob_rf, filepath: str):
     if y_prob_lr is not None:
         fpr_lr, tpr_lr, _ = roc_curve(y_true, y_prob_lr)
         auc_lr = auc(fpr_lr, tpr_lr)
-        plt.plot(fpr_lr, tpr_lr, color="#818CF8", lw=2, label=f"Logistic Regression (AUC = {auc_lr:.4f})")
+        plt.plot(fpr_lr, tpr_lr, color="#818CF8", lw=1.8, label=f"Logistic Regression (AUC = {auc_lr:.4f})")
         
-    # Plot Random Forest
+    # Plot Random Forest (Baseline)
     if y_prob_rf is not None:
         fpr_rf, tpr_rf, _ = roc_curve(y_true, y_prob_rf)
         auc_rf = auc(fpr_rf, tpr_rf)
-        plt.plot(fpr_rf, tpr_rf, color="#4F46E5", lw=2.5, label=f"Random Forest (AUC = {auc_rf:.4f})")
+        rf_label = "Random Forest (Baseline)" if y_prob_rf_tuned is not None else "Random Forest"
+        plt.plot(fpr_rf, tpr_rf, color="#6366F1", lw=1.8, label=f"{rf_label} (AUC = {auc_rf:.4f})")
+
+    # Plot Random Forest (Tuned)
+    if y_prob_rf_tuned is not None:
+        fpr_rf_t, tpr_rf_t, _ = roc_curve(y_true, y_prob_rf_tuned)
+        auc_rf_t = auc(fpr_rf_t, tpr_rf_t)
+        plt.plot(fpr_rf_t, tpr_rf_t, color="#4F46E5", lw=2.2, label=f"Random Forest (Tuned) (AUC = {auc_rf_t:.4f})")
         
     # Random guess baseline
     plt.plot([0, 1], [0, 1], color="#EF4444", lw=1.5, linestyle="--", label="Random Guess (AUC = 0.5000)")
@@ -233,4 +241,67 @@ def plot_comparison_roc_curves(y_true, y_prob_lr, y_prob_rf, filepath: str):
     plt.savefig(filepath, dpi=300)
     plt.close()
     logger.info("Overlaid ROC curves saved successfully.")
+
+def plot_three_way_comparison(df_comparison: pd.DataFrame, filepath: str):
+    """
+    Generate and save a grouped bar chart comparing multiple classification metrics
+    across three model variants (Logistic Regression, Baseline RF, and Tuned RF).
+
+    Args:
+        df_comparison (pd.DataFrame): Dataframe with columns Model, Accuracy, Precision, Recall, F1-Score.
+        filepath (str): Destination file path to save the bar chart figure.
+    """
+    logger.info(f"Generating three-way metrics comparison bar chart at {filepath}...")
+    
+    # Melt wide DataFrame to long-form for seaborn
+    df_melted = df_comparison.melt(
+        id_vars="Model",
+        value_vars=["Accuracy", "Precision", "Recall", "F1-Score"],
+        var_name="Metric",
+        value_name="Score"
+    )
+    
+    plt.figure(figsize=(9, 6))
+    
+    # Bar plot with distinct colors
+    ax = sns.barplot(
+        x="Metric", 
+        y="Score", 
+        hue="Model", 
+        data=df_melted, 
+        palette={
+            "Logistic Regression": "#818CF8", 
+            "Random Forest (Baseline)": "#6366F1", 
+            "Random Forest (Tuned)": "#4F46E5"
+        }
+    )
+    
+    plt.title("Performance Comparison of Baseline vs. Optimized Models", pad=20, fontweight="bold")
+    plt.xlabel("Evaluation Metric", labelpad=10)
+    plt.ylabel("Score Value", labelpad=10)
+    plt.ylim([0, 1.15])  # Keep space for labels
+    plt.legend(title="Model Variant", loc="lower right", frameon=True)
+    
+    # Annotate heights
+    for p in ax.patches:
+        height = p.get_height()
+        if pd.isna(height) or height == 0:
+            continue
+        ax.annotate(
+            f"{height:.2%}",
+            (p.get_x() + p.get_width() / 2., height),
+            ha='center', 
+            va='bottom', 
+            xytext=(0, 3), 
+            textcoords='offset points',
+            fontsize=8,
+            fontweight="bold"
+        )
+        
+    plt.tight_layout()
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    plt.savefig(filepath, dpi=300)
+    plt.close()
+    logger.info("Three-way metrics comparison bar chart saved successfully.")
+
 

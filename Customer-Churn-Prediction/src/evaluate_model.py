@@ -161,3 +161,73 @@ def compare_models(metrics_lr: dict, metrics_rf: dict, filepath: str) -> pd.Data
     
     return df_comparison
 
+def compare_three_models(metrics_lr: dict, metrics_rf_base: dict, metrics_rf_tuned: dict, filepath: str) -> pd.DataFrame:
+    """
+    Compare performance metrics of three models (Logistic Regression, Baseline Random Forest,
+    and Tuned Random Forest), compute improvement percentages, save as CSV, and log summary.
+
+    Args:
+        metrics_lr (dict): Evaluation metrics dictionary for Logistic Regression.
+        metrics_rf_base (dict): Evaluation metrics dictionary for Baseline Random Forest.
+        metrics_rf_tuned (dict): Evaluation metrics dictionary for Tuned Random Forest.
+        filepath (str): Destination path for comparison CSV.
+
+    Returns:
+        pd.DataFrame: Comparison DataFrame.
+    """
+    logger.info("Comparing three models and computing improvement percentages...")
+    
+    comparison_data = [
+        {
+            "Model": "Logistic Regression",
+            "Accuracy": metrics_lr["accuracy"],
+            "Precision": metrics_lr["precision"],
+            "Recall": metrics_lr["recall"],
+            "F1-Score": metrics_lr["f1_score"],
+            "ROC-AUC": metrics_lr["roc_auc"]
+        },
+        {
+            "Model": "Random Forest (Baseline)",
+            "Accuracy": metrics_rf_base["accuracy"],
+            "Precision": metrics_rf_base["precision"],
+            "Recall": metrics_rf_base["recall"],
+            "F1-Score": metrics_rf_base["f1_score"],
+            "ROC-AUC": metrics_rf_base["roc_auc"]
+        },
+        {
+            "Model": "Random Forest (Tuned)",
+            "Accuracy": metrics_rf_tuned["accuracy"],
+            "Precision": metrics_rf_tuned["precision"],
+            "Recall": metrics_rf_tuned["recall"],
+            "F1-Score": metrics_rf_tuned["f1_score"],
+            "ROC-AUC": metrics_rf_tuned["roc_auc"]
+        }
+    ]
+    
+    df_comparison = pd.DataFrame(comparison_data)
+    
+    # Calculate improvement percentages of Tuned RF relative to Baseline RF
+    base_f1 = metrics_rf_base["f1_score"]
+    tuned_f1 = metrics_rf_tuned["f1_score"]
+    f1_improvement = ((tuned_f1 - base_f1) / base_f1) if base_f1 != 0 else 0
+    
+    base_recall = metrics_rf_base["recall"]
+    tuned_recall = metrics_rf_tuned["recall"]
+    recall_improvement = ((tuned_recall - base_recall) / base_recall) if base_recall != 0 else 0
+    
+    # Save comparison metrics CSV
+    logger.info(f"Saving three-way comparison CSV to: {filepath}")
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    df_comparison.to_csv(filepath, index=False)
+    
+    logger.info("=========================================")
+    logger.info("THREE-WAY MODEL COMPARISON SUMMARY")
+    logger.info("-----------------------------------------")
+    logger.info("\n" + df_comparison.to_string(index=False))
+    logger.info(f"\nF1 Improvement (Tuned vs. Baseline RF): {f1_improvement:+.2%}")
+    logger.info(f"Recall Improvement (Tuned vs. Baseline RF): {recall_improvement:+.2%}")
+    logger.info("=========================================")
+    
+    return df_comparison
+
+

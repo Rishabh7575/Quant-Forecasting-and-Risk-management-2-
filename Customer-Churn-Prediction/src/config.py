@@ -47,6 +47,18 @@ COMPARISON_METRICS_PATH = os.path.join(BASE_DIR, "reports", "model_comparison_me
 COMPARISON_BAR_CHART_PATH = os.path.join(BASE_DIR, "reports", "figures", "comparison_metrics_bar_chart.png")
 COMPARISON_ROC_CURVE_PATH = os.path.join(BASE_DIR, "reports", "figures", "comparison_roc_curves.png")
 
+# Tuned Random Forest Model & Predictions Paths
+RF_TUNED_MODEL_PATH = os.path.join(BASE_DIR, "models", "random_forest_tuned.joblib")
+RF_TUNED_METRICS_PATH = os.path.join(BASE_DIR, "reports", "random_forest_tuned_metrics.json")
+RF_TUNED_PREDICTIONS_PATH = os.path.join(BASE_DIR, "data", "processed", "predictions_rf_tuned.csv")
+RF_BEST_PARAMS_PATH = os.path.join(BASE_DIR, "reports", "random_forest_best_params.json")
+RF_TUNING_RESULTS_PATH = os.path.join(BASE_DIR, "reports", "random_forest_tuning_results.csv")
+
+# Three-Way Comparison Paths
+COMPARISON_METRICS_THREE_WAY_PATH = os.path.join(BASE_DIR, "reports", "model_comparison_metrics_three_way.csv")
+COMPARISON_BAR_CHART_THREE_WAY_PATH = os.path.join(BASE_DIR, "reports", "figures", "comparison_metrics_three_way.png")
+
+
 
 
 # Reports & Figure Directories
