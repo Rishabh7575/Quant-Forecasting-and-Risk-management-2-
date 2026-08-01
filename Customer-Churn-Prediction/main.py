@@ -85,45 +85,18 @@ def main():
         save_predictions(y_test, y_pred_rf, y_prob_rf, config.RF_PREDICTIONS_PATH)
         save_metrics(metrics_rf, config.RF_METRICS_PATH)
         
-        # 7. Hyperparameter Tuning of Random Forest
-        logger.info("Starting systematic Random Forest hyperparameter tuning...")
-        import json
-        rf_tuned_model, best_params, best_cv_score, total_comb, cv_results = tune_random_forest(X_train, y_train)
-        
-        # Save tuned model
-        save_model(rf_tuned_model, config.RF_TUNED_MODEL_PATH)
-        
-        # Save best parameters JSON
-        logger.info(f"Saving best tuning parameters to: {config.RF_BEST_PARAMS_PATH}")
-        with open(config.RF_BEST_PARAMS_PATH, "w") as f:
-            json.dump(best_params, f, indent=4)
-            
-        # Save tuning results CSV
-        logger.info(f"Saving tuning search results to: {config.RF_TUNING_RESULTS_PATH}")
-        cv_results.to_csv(config.RF_TUNING_RESULTS_PATH, index=False)
-        
-        # Evaluate Tuned Model
-        logger.info("Evaluating tuned Random Forest model...")
-        metrics_rf_tuned, y_pred_rf_tuned, y_prob_rf_tuned = evaluate(rf_tuned_model, X_test, y_test)
-        save_predictions(y_test, y_pred_rf_tuned, y_prob_rf_tuned, config.RF_TUNED_PREDICTIONS_PATH)
-        save_metrics(metrics_rf_tuned, config.RF_TUNED_METRICS_PATH)
-        
-        # 8. Model Comparison and Visualization (Three-Way)
-        logger.info("Running baseline vs. tuned model comparison...")
+        # 7. Model Comparison and Visualization
+        logger.info("Running baseline vs. Random Forest model comparison...")
         df_comparison = compare_models(metrics_lr, metrics_rf, config.COMPARISON_METRICS_PATH)
-        df_comparison_three = compare_three_models(
-            metrics_lr, metrics_rf, metrics_rf_tuned, config.COMPARISON_METRICS_THREE_WAY_PATH
-        )
         
         logger.info("Generating model comparison visualizations...")
         plot_comparison_metrics(df_comparison, config.COMPARISON_BAR_CHART_PATH)
-        plot_three_way_comparison(df_comparison_three, config.COMPARISON_BAR_CHART_THREE_WAY_PATH)
         plot_comparison_roc_curves(
-            y_test, y_prob_lr, y_prob_rf, config.COMPARISON_ROC_CURVE_PATH, y_prob_rf_tuned=y_prob_rf_tuned
+            y_test, y_prob_lr, y_prob_rf, config.COMPARISON_ROC_CURVE_PATH
         )
         
         logger.info("=========================================")
-        logger.info("Pipeline Baseline & Optimized Model training & Comparison completed successfully")
+        logger.info("Pipeline Baseline Models Training & Comparison completed successfully")
         logger.info("=========================================")
         
     except Exception as e:
