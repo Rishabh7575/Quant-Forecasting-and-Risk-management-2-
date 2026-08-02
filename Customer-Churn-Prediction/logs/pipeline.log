@@ -1058,3 +1058,233 @@ Logistic Regression    0.9990   0.972973 0.972973  0.972973 0.999986
 2026-08-02 22:50:22,626 - feature_engineering - INFO - Engineering customer transaction velocity and historical features...
 2026-08-02 22:50:24,050 - feature_engineering - INFO - Engineering ratio-based features...
 2026-08-02 22:50:24,057 - feature_engineering - INFO - Feature engineering completed. Shape: (10000, 15)
+2026-08-02 22:52:15,700 - risk_scoring - INFO - =========================================
+2026-08-02 22:52:15,700 - risk_scoring - INFO - Initializing Risk Scoring Engine Pipeline
+2026-08-02 22:52:15,700 - risk_scoring - INFO - =========================================
+2026-08-02 22:52:15,701 - risk_scoring - INFO - Loaded risk scoring configuration from D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\config\risk_scoring_config.json
+2026-08-02 22:52:15,701 - risk_scoring - INFO - Model Path:         D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models/random_forest_tuned.joblib
+2026-08-02 22:52:15,702 - risk_scoring - INFO - Low Risk Threshold:  0.2
+2026-08-02 22:52:15,702 - risk_scoring - INFO - High Risk Threshold: 0.6
+2026-08-02 22:52:15,702 - risk_scoring - INFO - Reconstructing test split to retrieve transaction/customer IDs...
+2026-08-02 22:52:15,742 - feature_engineering - INFO - Starting feature engineering process...
+2026-08-02 22:52:15,743 - feature_engineering - INFO - Converting 'timestamp' to datetime objects...
+2026-08-02 22:52:15,751 - feature_engineering - INFO - Sorting transactions chronologically...
+2026-08-02 22:52:15,756 - feature_engineering - INFO - Engineering temporal features...
+2026-08-02 22:52:15,759 - feature_engineering - INFO - Engineering geographical features...
+2026-08-02 22:52:15,763 - feature_engineering - INFO - Engineering customer transaction velocity and historical features...
+2026-08-02 22:52:17,367 - feature_engineering - INFO - Engineering ratio-based features...
+2026-08-02 22:52:17,369 - feature_engineering - INFO - Feature engineering completed. Shape: (10000, 15)
+2026-08-02 22:52:17,429 - risk_scoring - INFO - Loading trained model from D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models/random_forest_tuned.joblib...
+2026-08-02 22:52:19,329 - risk_scoring - INFO - Calculating prediction probabilities on test set...
+2026-08-02 22:52:19,420 - risk_scoring - INFO - Generating prediction table with risk scores and levels...
+2026-08-02 22:52:19,462 - risk_scoring - INFO - Saved risk predictions table to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\risk_predictions.csv
+2026-08-02 22:52:19,465 - risk_scoring - INFO - Summary Statistics: {
+  "total_predictions": 2000,
+  "high_risk_cases": 38,
+  "medium_risk_cases": 0,
+  "low_risk_cases": 1962,
+  "percentage_high_risk": 1.9,
+  "percentage_medium_risk": 0.0,
+  "percentage_low_risk": 98.1
+}
+2026-08-02 22:52:19,468 - risk_scoring - INFO - Saved risk summary report to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\risk_summary.json
+2026-08-02 22:52:19,469 - risk_scoring - INFO - Generating risk visualizations in D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\figures...
+2026-08-02 22:52:21,733 - risk_scoring - INFO - Risk visualizations generated and saved successfully.
+2026-08-02 22:52:21,733 - risk_scoring - INFO - =========================================
+2026-08-02 22:52:21,733 - risk_scoring - INFO - Risk Scoring Engine Execution Completed
+2026-08-02 22:52:21,734 - risk_scoring - INFO - =========================================
+2026-08-02 22:52:52,265 - main_pipeline - INFO - =========================================
+2026-08-02 22:52:52,266 - main_pipeline - INFO - Starting Financial Transaction Risk Engine
+2026-08-02 22:52:52,266 - main_pipeline - INFO - =========================================
+2026-08-02 22:52:52,266 - main_pipeline - INFO - Starting preprocessing step (data cleaning)...
+2026-08-02 22:52:52,266 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:52,266 - data_preprocessing - INFO - STARTING PREPROCESSING PIPELINE
+2026-08-02 22:52:52,266 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:52,266 - data_preprocessing - INFO - Loading raw dataset from D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\raw\transactions.csv...
+2026-08-02 22:52:52,341 - data_preprocessing - INFO - Loaded dataset with shape (10000, 8)
+2026-08-02 22:52:52,370 - data_preprocessing - INFO - Checking for duplicate rows...
+2026-08-02 22:52:52,383 - data_preprocessing - INFO - No duplicate rows found.
+2026-08-02 22:52:52,385 - data_preprocessing - INFO - Checking for missing values...
+2026-08-02 22:52:52,393 - data_preprocessing - INFO - No missing values found.
+2026-08-02 22:52:52,394 - data_preprocessing - INFO - Validating and converting data types...
+2026-08-02 22:52:52,395 - data_preprocessing - INFO - Converting 'timestamp' to datetime...
+2026-08-02 22:52:52,411 - data_preprocessing - INFO - Ensuring 'amount' is float...
+2026-08-02 22:52:52,412 - data_preprocessing - INFO - Ensuring target 'is_anomaly' is integer...
+2026-08-02 22:52:52,416 - data_preprocessing - INFO - Data type validation and conversion completed.
+2026-08-02 22:52:52,417 - data_preprocessing - INFO - Standardizing categorical values (lowercasing & stripping whitespace)...
+2026-08-02 22:52:52,420 - data_preprocessing - INFO - Standardizing column: merchant_category
+2026-08-02 22:52:52,430 - data_preprocessing - INFO - Standardizing column: location
+2026-08-02 22:52:52,442 - data_preprocessing - INFO - Standardizing column: device_type
+2026-08-02 22:52:52,449 - data_preprocessing - INFO - Categorical standardization completed.
+2026-08-02 22:52:52,450 - data_preprocessing - INFO - Detecting invalid/unrealistic values...
+2026-08-02 22:52:52,454 - data_preprocessing - INFO - No invalid transaction amounts detected (all amounts > 0).
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - Saved processed dataset to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\processed\transactions_clean.csv
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - PREPROCESSING PIPELINE SUMMARY
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - ------------------------------------------------------------
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - Original shape:       (10000, 8)
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - Final shape:          (10000, 8)
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - Duplicates removed:   0
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - Missing values resolved: 0
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - Invalid values removed: 0
+2026-08-02 22:52:52,543 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:52,544 - main_pipeline - INFO - Preprocessing completed. Cleaned dataset has 10000 rows.
+2026-08-02 22:52:52,544 - main_pipeline - INFO - Starting feature engineering step...
+2026-08-02 22:52:52,544 - feature_engineering - INFO - Starting feature engineering process...
+2026-08-02 22:52:52,546 - feature_engineering - INFO - Sorting transactions chronologically...
+2026-08-02 22:52:52,549 - feature_engineering - INFO - Engineering temporal features...
+2026-08-02 22:52:52,553 - feature_engineering - INFO - Engineering geographical features...
+2026-08-02 22:52:52,558 - feature_engineering - INFO - Engineering customer transaction velocity and historical features...
+2026-08-02 22:52:54,003 - feature_engineering - INFO - Engineering ratio-based features...
+2026-08-02 22:52:54,005 - feature_engineering - INFO - Feature engineering completed. Shape: (10000, 15)
+2026-08-02 22:52:54,007 - main_pipeline - INFO - Starting ML dataset preparation (scaling, encoding, splitting, saving)...
+2026-08-02 22:52:54,007 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:54,008 - data_preprocessing - INFO - PREPARING MACHINE LEARNING DATASET & PREPROCESSING PIPELINE
+2026-08-02 22:52:54,008 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:54,017 - data_preprocessing - INFO - Target distribution:
+is_anomaly
+0    0.9814
+1    0.0186
+Name: proportion, dtype: float64
+2026-08-02 22:52:54,017 - data_preprocessing - INFO - Features shape: (10000, 11)
+2026-08-02 22:52:54,029 - data_preprocessing - INFO - Train split shape: (8000, 11), Test split shape: (2000, 11)
+2026-08-02 22:52:54,029 - data_preprocessing - INFO - Fitting ColumnTransformer on training split and transforming both splits...
+2026-08-02 22:52:54,066 - data_preprocessing - INFO - Saving split datasets to disk...
+2026-08-02 22:52:54,301 - data_preprocessing - INFO - Saving preprocessor object to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\preprocessor.joblib
+2026-08-02 22:52:54,306 - data_preprocessing - INFO - Saving split dimensions to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\processed\split_dimensions.json
+2026-08-02 22:52:54,307 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:54,308 - data_preprocessing - INFO - DATASET PREPARATION PIPELINE SUMMARY
+2026-08-02 22:52:54,308 - data_preprocessing - INFO - ------------------------------------------------------------
+2026-08-02 22:52:54,308 - data_preprocessing - INFO - X_train shape: (8000, 30)
+2026-08-02 22:52:54,308 - data_preprocessing - INFO - X_test shape:  (2000, 30)
+2026-08-02 22:52:54,309 - data_preprocessing - INFO - Train anomaly rate: 1.8625%
+2026-08-02 22:52:54,309 - data_preprocessing - INFO - Test anomaly rate:  1.8500%
+2026-08-02 22:52:54,309 - data_preprocessing - INFO - ============================================================
+2026-08-02 22:52:54,311 - main_pipeline - INFO - Loading prepared train/test splits for modeling...
+2026-08-02 22:52:54,480 - main_pipeline - INFO - Starting baseline Logistic Regression model training...
+2026-08-02 22:52:54,480 - train_model - INFO - Initializing and training baseline Logistic Regression model...
+2026-08-02 22:52:54,518 - train_model - INFO - Logistic Regression training completed successfully.
+2026-08-02 22:52:54,519 - train_model - INFO - Saving model object to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\baseline_logistic_regression.joblib
+2026-08-02 22:52:54,521 - train_model - INFO - Model saved successfully.
+2026-08-02 22:52:54,521 - main_pipeline - INFO - Evaluating baseline Logistic Regression model...
+2026-08-02 22:52:54,521 - evaluate_model - INFO - Starting baseline model evaluation on test set...
+2026-08-02 22:52:54,556 - evaluate_model - INFO - =========================================
+2026-08-02 22:52:54,556 - evaluate_model - INFO - BASELINE EVALUATION REPORT
+2026-08-02 22:52:54,556 - evaluate_model - INFO - -----------------------------------------
+2026-08-02 22:52:54,556 - evaluate_model - INFO - Accuracy:         99.9000%
+2026-08-02 22:52:54,557 - evaluate_model - INFO - Precision:        97.2973%
+2026-08-02 22:52:54,557 - evaluate_model - INFO - Recall:           97.2973%
+2026-08-02 22:52:54,557 - evaluate_model - INFO - F1-score:         97.2973%
+2026-08-02 22:52:54,557 - evaluate_model - INFO - ROC-AUC:          99.9986%
+2026-08-02 22:52:54,557 - evaluate_model - INFO - Confusion Matrix:
+[[1962    1]
+ [   1   36]]
+2026-08-02 22:52:54,557 - evaluate_model - INFO - Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00      1963
+           1       0.97      0.97      0.97        37
+
+    accuracy                           1.00      2000
+   macro avg       0.99      0.99      0.99      2000
+weighted avg       1.00      1.00      1.00      2000
+
+2026-08-02 22:52:54,558 - evaluate_model - INFO - =========================================
+2026-08-02 22:52:54,558 - evaluate_model - INFO - Saving predictions to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\processed\predictions_baseline.csv
+2026-08-02 22:52:54,567 - evaluate_model - INFO - Predictions saved successfully.
+2026-08-02 22:52:54,567 - evaluate_model - INFO - Saving metrics report to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\baseline_metrics.json
+2026-08-02 22:52:54,568 - evaluate_model - INFO - Metrics report saved successfully.
+2026-08-02 22:52:54,569 - visualization - INFO - Generating Confusion Matrix heatmap at D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\figures\baseline_confusion_matrix.png...
+2026-08-02 22:52:54,958 - visualization - INFO - Confusion Matrix heatmap saved successfully.
+2026-08-02 22:52:54,958 - visualization - INFO - Generating ROC Curve plot at D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\figures\baseline_roc_curve.png...
+2026-08-02 22:52:55,244 - visualization - INFO - ROC Curve plot saved successfully.
+2026-08-02 22:52:55,244 - visualization - INFO - Generating Precision-Recall Curve plot at D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\figures\baseline_precision_recall_curve.png...
+2026-08-02 22:52:55,507 - visualization - INFO - Precision-Recall Curve plot saved successfully.
+2026-08-02 22:52:55,507 - main_pipeline - INFO - Starting Random Forest model training...
+2026-08-02 22:52:55,507 - train_model - INFO - Initializing and training baseline Random Forest model...
+2026-08-02 22:52:56,292 - train_model - INFO - Random Forest training completed successfully.
+2026-08-02 22:52:56,292 - train_model - INFO - Saving model object to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\random_forest_baseline.joblib
+2026-08-02 22:52:56,354 - train_model - INFO - Model saved successfully.
+2026-08-02 22:52:56,355 - main_pipeline - INFO - Evaluating Random Forest model...
+2026-08-02 22:52:56,355 - evaluate_model - INFO - Starting baseline model evaluation on test set...
+2026-08-02 22:52:56,453 - evaluate_model - INFO - =========================================
+2026-08-02 22:52:56,454 - evaluate_model - INFO - BASELINE EVALUATION REPORT
+2026-08-02 22:52:56,454 - evaluate_model - INFO - -----------------------------------------
+2026-08-02 22:52:56,454 - evaluate_model - INFO - Accuracy:         99.9500%
+2026-08-02 22:52:56,455 - evaluate_model - INFO - Precision:        97.3684%
+2026-08-02 22:52:56,455 - evaluate_model - INFO - Recall:           100.0000%
+2026-08-02 22:52:56,455 - evaluate_model - INFO - F1-score:         98.6667%
+2026-08-02 22:52:56,455 - evaluate_model - INFO - ROC-AUC:          100.0000%
+2026-08-02 22:52:56,455 - evaluate_model - INFO - Confusion Matrix:
+[[1962    1]
+ [   0   37]]
+2026-08-02 22:52:56,456 - evaluate_model - INFO - Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00      1963
+           1       0.97      1.00      0.99        37
+
+    accuracy                           1.00      2000
+   macro avg       0.99      1.00      0.99      2000
+weighted avg       1.00      1.00      1.00      2000
+
+2026-08-02 22:52:56,456 - evaluate_model - INFO - =========================================
+2026-08-02 22:52:56,456 - evaluate_model - INFO - Saving predictions to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\processed\predictions_rf.csv
+2026-08-02 22:52:56,464 - evaluate_model - INFO - Predictions saved successfully.
+2026-08-02 22:52:56,464 - evaluate_model - INFO - Saving metrics report to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\random_forest_metrics.json
+2026-08-02 22:52:56,467 - evaluate_model - INFO - Metrics report saved successfully.
+2026-08-02 22:52:56,467 - main_pipeline - INFO - Running baseline vs. Random Forest model comparison...
+2026-08-02 22:52:56,467 - evaluate_model - INFO - Comparing model performance metrics...
+2026-08-02 22:52:56,469 - evaluate_model - INFO - Saving comparison metrics CSV to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\model_comparison_metrics.csv
+2026-08-02 22:52:56,474 - evaluate_model - INFO - =========================================
+2026-08-02 22:52:56,474 - evaluate_model - INFO - MODEL COMPARISON SUMMARY
+2026-08-02 22:52:56,474 - evaluate_model - INFO - -----------------------------------------
+2026-08-02 22:52:56,481 - evaluate_model - INFO - 
+              Model  Accuracy  Precision   Recall  F1-Score  ROC-AUC
+Logistic Regression    0.9990   0.972973 0.972973  0.972973 0.999986
+      Random Forest    0.9995   0.973684 1.000000  0.986667 1.000000
+2026-08-02 22:52:56,481 - evaluate_model - INFO - =========================================
+2026-08-02 22:52:56,481 - main_pipeline - INFO - Generating model comparison visualizations...
+2026-08-02 22:52:56,481 - visualization - INFO - Generating metrics comparison bar chart at D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\figures\comparison_metrics_bar_chart.png...
+2026-08-02 22:52:56,882 - visualization - INFO - Metrics comparison bar chart saved successfully.
+2026-08-02 22:52:56,882 - visualization - INFO - Generating overlaid ROC curves at D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\figures\comparison_roc_curves.png...
+2026-08-02 22:52:57,182 - visualization - INFO - Overlaid ROC curves saved successfully.
+2026-08-02 22:52:57,182 - main_pipeline - INFO - Starting Risk Scoring Engine pipeline...
+2026-08-02 22:52:57,182 - risk_scoring - INFO - =========================================
+2026-08-02 22:52:57,182 - risk_scoring - INFO - Initializing Risk Scoring Engine Pipeline
+2026-08-02 22:52:57,182 - risk_scoring - INFO - =========================================
+2026-08-02 22:52:57,183 - risk_scoring - INFO - Loaded risk scoring configuration from D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\config\risk_scoring_config.json
+2026-08-02 22:52:57,183 - risk_scoring - INFO - Model Path:         D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models/random_forest_tuned.joblib
+2026-08-02 22:52:57,183 - risk_scoring - INFO - Low Risk Threshold:  0.2
+2026-08-02 22:52:57,183 - risk_scoring - INFO - High Risk Threshold: 0.6
+2026-08-02 22:52:57,183 - risk_scoring - INFO - Reconstructing test split to retrieve transaction/customer IDs...
+2026-08-02 22:52:57,256 - feature_engineering - INFO - Starting feature engineering process...
+2026-08-02 22:52:57,257 - feature_engineering - INFO - Converting 'timestamp' to datetime objects...
+2026-08-02 22:52:57,271 - feature_engineering - INFO - Sorting transactions chronologically...
+2026-08-02 22:52:57,281 - feature_engineering - INFO - Engineering temporal features...
+2026-08-02 22:52:57,287 - feature_engineering - INFO - Engineering geographical features...
+2026-08-02 22:52:57,295 - feature_engineering - INFO - Engineering customer transaction velocity and historical features...
+2026-08-02 22:52:58,931 - feature_engineering - INFO - Engineering ratio-based features...
+2026-08-02 22:52:58,932 - feature_engineering - INFO - Feature engineering completed. Shape: (10000, 15)
+2026-08-02 22:52:58,967 - risk_scoring - INFO - Loading trained model from D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models/random_forest_tuned.joblib...
+2026-08-02 22:52:59,083 - risk_scoring - INFO - Calculating prediction probabilities on test set...
+2026-08-02 22:52:59,191 - risk_scoring - INFO - Generating prediction table with risk scores and levels...
+2026-08-02 22:52:59,216 - risk_scoring - INFO - Saved risk predictions table to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\risk_predictions.csv
+2026-08-02 22:52:59,218 - risk_scoring - INFO - Summary Statistics: {
+  "total_predictions": 2000,
+  "high_risk_cases": 38,
+  "medium_risk_cases": 0,
+  "low_risk_cases": 1962,
+  "percentage_high_risk": 1.9,
+  "percentage_medium_risk": 0.0,
+  "percentage_low_risk": 98.1
+}
+2026-08-02 22:52:59,220 - risk_scoring - INFO - Saved risk summary report to: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\risk_summary.json
+2026-08-02 22:52:59,220 - risk_scoring - INFO - Generating risk visualizations in D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\figures...
+2026-08-02 22:53:00,343 - risk_scoring - INFO - Risk visualizations generated and saved successfully.
+2026-08-02 22:53:00,343 - risk_scoring - INFO - =========================================
+2026-08-02 22:53:00,343 - risk_scoring - INFO - Risk Scoring Engine Execution Completed
+2026-08-02 22:53:00,343 - risk_scoring - INFO - =========================================
+2026-08-02 22:53:00,344 - main_pipeline - INFO - =========================================
+2026-08-02 22:53:00,344 - main_pipeline - INFO - Pipeline Baseline Models Training & Comparison completed successfully
+2026-08-02 22:53:00,344 - main_pipeline - INFO - =========================================

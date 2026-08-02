@@ -1,0 +1,11 @@
+{
+    "total_predictions": 2000,
+    "high_risk_cases": 38,
+    "medium_risk_cases": 0,
+    "low_risk_cases": 1962,
+    "percentage_high_risk": 1.9,
+    "percentage_medium_risk": 0.0,
+    "percentage_low_risk": 98.1,
+    "configured_low_risk_threshold": 0.2,
+    "configured_high_risk_threshold": 0.6
+}
