@@ -20,6 +20,7 @@ from src.visualization import (
     plot_comparison_roc_curves,
     plot_three_way_comparison
 )
+from src.risk_scoring import run_risk_pipeline
 
 def main():
     """
@@ -94,6 +95,9 @@ def main():
         plot_comparison_roc_curves(
             y_test, y_prob_lr, y_prob_rf, config.COMPARISON_ROC_CURVE_PATH
         )
+        # 8. Run Risk Scoring Engine
+        logger.info("Starting Risk Scoring Engine pipeline...")
+        run_risk_pipeline()
         
         logger.info("=========================================")
         logger.info("Pipeline Baseline Models Training & Comparison completed successfully")

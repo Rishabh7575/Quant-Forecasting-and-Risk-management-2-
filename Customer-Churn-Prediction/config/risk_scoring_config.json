@@ -1,0 +1,5 @@
+{
+    "model_path": "models/random_forest_tuned.joblib",
+    "low_risk_threshold": 0.20,
+    "high_risk_threshold": 0.60
+}

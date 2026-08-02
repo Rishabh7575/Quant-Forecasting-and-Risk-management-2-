@@ -58,8 +58,10 @@ RF_TUNING_RESULTS_PATH = os.path.join(BASE_DIR, "reports", "random_forest_tuning
 COMPARISON_METRICS_THREE_WAY_PATH = os.path.join(BASE_DIR, "reports", "model_comparison_metrics_three_way.csv")
 COMPARISON_BAR_CHART_THREE_WAY_PATH = os.path.join(BASE_DIR, "reports", "figures", "comparison_metrics_three_way.png")
 
-
-
+# Risk Scoring Engine Paths
+RISK_CONFIG_PATH = os.path.join(BASE_DIR, "config", "risk_scoring_config.json")
+RISK_PREDICTIONS_PATH = os.path.join(BASE_DIR, "reports", "risk_predictions.csv")
+RISK_SUMMARY_PATH = os.path.join(BASE_DIR, "reports", "risk_summary.json")
 
 # Reports & Figure Directories
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")
