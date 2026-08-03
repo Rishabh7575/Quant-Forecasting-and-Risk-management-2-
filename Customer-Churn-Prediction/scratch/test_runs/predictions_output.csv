@@ -1,0 +1,21 @@
+transaction_id,customer_id,timestamp,amount,merchant_category,location,device_type,prediction,probability_score,risk_score,risk_level
+TXN00000001,CUST1328,2026-06-26 22:40:37,200.0,cash_withdrawal,"Chicago, US",atm,0,0.0,0.0,Low Risk
+TXN00000002,CUST1058,2026-06-26 22:47:22,724.18,travel,"Houston, US",web,0,0.0,0.0,Low Risk
+TXN00000003,CUST1013,2026-06-26 22:51:17,207.51,online_retail,"Chicago, US",mobile,0,0.0,0.0,Low Risk
+TXN00000004,CUST1380,2026-06-26 22:57:10,47.93,grocery,"Miami, US",pos,0,0.0,0.0,Low Risk
+TXN00000005,CUST1141,2026-06-26 22:58:20,322.03,travel,"New York, US",pos,0,0.0,0.0,Low Risk
+TXN00000006,CUST1126,2026-06-26 23:00:49,70.88,transfer,"Chicago, US",mobile,0,0.0,0.0,Low Risk
+TXN00000007,CUST1115,2026-06-26 23:02:15,300.0,cash_withdrawal,"Chicago, US",atm,0,0.0,0.0,Low Risk
+TXN00000008,CUST1072,2026-06-26 23:03:45,54.78,grocery,"Houston, US",atm,0,0.0,0.0,Low Risk
+TXN00000009,CUST1378,2026-06-26 23:06:15,18.98,online_retail,"Houston, US",web,0,0.0,0.0,Low Risk
+TXN00000010,CUST1053,2026-06-26 23:07:23,669.76,travel,"Miami, US",web,0,0.0,0.0,Low Risk
+TXN00000011,CUST1347,2026-06-26 23:07:40,20.0,cash_withdrawal,"Chicago, US",atm,0,0.0,0.0,Low Risk
+TXN00000012,CUST1380,2026-06-26 23:16:00,60.0,cash_withdrawal,"New York, US",atm,0,0.0,0.0,Low Risk
+TXN00000013,CUST1457,2026-06-26 23:21:28,60.21,dining,"Chicago, US",pos,0,0.0,0.0,Low Risk
+TXN00000014,CUST1280,2026-06-26 23:26:24,41.29,grocery,"Los Angeles, US",web,0,0.0,0.0,Low Risk
+TXN00000015,CUST1045,2026-06-26 23:30:57,300.0,cash_withdrawal,"New York, US",atm,0,0.0,0.0,Low Risk
+TXN00000016,CUST1303,2026-06-26 23:31:59,80.78,transfer,"New York, US",web,0,0.0,0.0,Low Risk
+TXN00000017,CUST1217,2026-06-26 23:33:54,468.71,travel,"Miami, US",pos,0,0.0,0.0,Low Risk
+TXN00000018,CUST1017,2026-06-26 23:38:41,128.83,transfer,"Los Angeles, US",mobile,0,0.0,0.0,Low Risk
+TXN00000019,CUST1016,2026-06-26 23:41:50,1.0,dining,"Chicago, US",mobile,0,0.0,0.0,Low Risk
+TXN00000020,CUST1048,2026-06-26 23:46:41,59.01,dining,"Miami, US",mobile,0,0.0,0.0,Low Risk

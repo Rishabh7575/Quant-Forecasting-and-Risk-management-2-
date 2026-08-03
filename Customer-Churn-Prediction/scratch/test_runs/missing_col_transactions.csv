@@ -1,0 +1,2 @@
+transaction_id,customer_id,timestamp,merchant_category,location,device_type
+TXN9999,CUST1234,2026-08-01 10:00:00,dining,"Chicago, US",mobile
