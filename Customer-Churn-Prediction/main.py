@@ -86,15 +86,49 @@ def main():
         save_predictions(y_test, y_pred_rf, y_prob_rf, config.RF_PREDICTIONS_PATH)
         save_metrics(metrics_rf, config.RF_METRICS_PATH)
         
+        # 6.5. Tune Random Forest Model
+        logger.info("Starting Random Forest hyperparameter tuning...")
+        tuned_rf_model, best_params, best_score, n_iter, cv_results = tune_random_forest(X_train, y_train)
+        save_model(tuned_rf_model, config.RF_TUNED_MODEL_PATH)
+        
+        # Evaluate Tuned Random Forest
+        logger.info("Evaluating Tuned Random Forest model...")
+        metrics_rf_tuned, y_pred_rf_tuned, y_prob_rf_tuned = evaluate(tuned_rf_model, X_test, y_test)
+        save_predictions(y_test, y_pred_rf_tuned, y_prob_rf_tuned, config.RF_TUNED_PREDICTIONS_PATH)
+        save_metrics(metrics_rf_tuned, config.RF_TUNED_METRICS_PATH)
+        
+        # Save tuning metadata
+        import json
+        with open(config.RF_BEST_PARAMS_PATH, "w") as f:
+            json.dump(best_params, f, indent=4)
+        cv_results.to_csv(config.RF_TUNING_RESULTS_PATH, index=False)
+        
         # 7. Model Comparison and Visualization
         logger.info("Running baseline vs. Random Forest model comparison...")
         df_comparison = compare_models(metrics_lr, metrics_rf, config.COMPARISON_METRICS_PATH)
         
+        logger.info("Running three-way model comparison...")
+        df_comparison_three = compare_three_models(
+            metrics_lr, metrics_rf, metrics_rf_tuned, config.COMPARISON_METRICS_THREE_WAY_PATH
+        )
+        
         logger.info("Generating model comparison visualizations...")
         plot_comparison_metrics(df_comparison, config.COMPARISON_BAR_CHART_PATH)
+        plot_three_way_comparison(df_comparison_three, config.COMPARISON_BAR_CHART_THREE_WAY_PATH)
         plot_comparison_roc_curves(
-            y_test, y_prob_lr, y_prob_rf, config.COMPARISON_ROC_CURVE_PATH
+            y_test, y_prob_lr, y_prob_rf, config.COMPARISON_ROC_CURVE_PATH, y_prob_rf_tuned=y_prob_rf_tuned
         )
+        
+        # Select and save the best performing model
+        models_dict = {
+            "Logistic Regression": (lr_model, metrics_lr["f1_score"]),
+            "Random Forest (Baseline)": (rf_model, metrics_rf["f1_score"]),
+            "Random Forest (Tuned)": (tuned_rf_model, metrics_rf_tuned["f1_score"])
+        }
+        best_model_name = max(models_dict, key=lambda k: models_dict[k][1])
+        best_model, best_f1 = models_dict[best_model_name]
+        logger.info(f"Best performing model by F1-score: {best_model_name} (F1: {best_f1:.4%})")
+        save_model(best_model, config.BEST_MODEL_PATH)
         # 8. Run Risk Scoring Engine
         logger.info("Starting Risk Scoring Engine pipeline...")
         run_risk_pipeline()

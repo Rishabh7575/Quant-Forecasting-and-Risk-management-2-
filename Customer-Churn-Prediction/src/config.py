@@ -25,6 +25,9 @@ SPLIT_DIMENSIONS_PATH = os.path.join(BASE_DIR, "data", "processed", "split_dimen
 # Preprocessor Saving Path
 PREPROCESSOR_PATH = os.path.join(BASE_DIR, "models", "preprocessor.joblib")
 
+# Best Performing Model Saving Path
+BEST_MODEL_PATH = os.path.join(BASE_DIR, "models", "best_model.joblib")
+
 # Model Saving Path (Baseline Logistic Regression)
 BASELINE_MODEL_PATH = os.path.join(BASE_DIR, "models", "baseline_logistic_regression.joblib")
 
