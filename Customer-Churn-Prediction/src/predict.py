@@ -226,6 +226,63 @@ def preprocess_and_engineer_features(df_new: pd.DataFrame, history_path: str = N
     logger.info(f"Features engineered successfully. Row count matches input: {len(df_features)}")
     return df_features
 
+def predict_dataframe(df_input: pd.DataFrame, model, preprocessor, 
+                      history_path: str = None, risk_config_path: str = None) -> pd.DataFrame:
+    """
+    Validate input data, automatically engineer features, perform predictions, 
+    and calculate risk scores/levels on an in-memory DataFrame.
+    
+    Args:
+        df_input (pd.DataFrame): Raw transaction data to run predictions for.
+        model: Loaded model instance.
+        preprocessor: Loaded ColumnTransformer preprocessor.
+        history_path (str): Optional custom path for historical transaction context.
+        risk_config_path (str): Optional path to custom risk scoring thresholds config.
+        
+    Returns:
+        pd.DataFrame: Prediction results DataFrame with added prediction details.
+    """
+    # 1. Validate input data
+    validate_input_data(df_input)
+    
+    # 2. Preprocess & Feature Engineering
+    df_engineered = preprocess_and_engineer_features(df_input, history_path=history_path)
+    
+    # 3. Separate features to be processed
+    feature_cols = config.ENGINEERED_NUMERIC_FEATURES + config.ENGINEERED_CATEGORICAL_FEATURES
+    X_untransformed = df_engineered[feature_cols].copy()
+    
+    # 4. Transform using preprocessor
+    logger.info("Applying preprocessor transformation...")
+    X_processed = preprocessor.transform(X_untransformed)
+    
+    # 5. Predict probabilities and classes
+    logger.info("Generating predictions and probability scores...")
+    if hasattr(model, "predict_proba"):
+        probabilities = model.predict_proba(X_processed)[:, 1]
+    else:
+        logger.warning("Model does not support predict_proba; generating fallback probabilities.")
+        probabilities = model.predict(X_processed).astype(float)
+        
+    predictions = model.predict(X_processed)
+    
+    # 6. Apply risk scoring engine
+    risk_cfg = load_risk_config(risk_config_path)
+    low_thresh = risk_cfg["low_risk_threshold"]
+    high_thresh = risk_cfg["high_risk_threshold"]
+    
+    risk_scores = calculate_risk_scores(probabilities)
+    risk_levels = categorize_risk(probabilities, low_thresh, high_thresh)
+    
+    # 7. Assemble final predictions DataFrame
+    df_output = df_input.copy()
+    df_output["prediction"] = predictions.astype(int)
+    df_output["probability_score"] = np.round(probabilities, 4)
+    df_output["risk_score"] = risk_scores
+    df_output["risk_level"] = risk_levels
+    
+    return df_output
+
 def run_predictions(input_csv: str, output_csv: str, model_path: str = None, 
                     preprocessor_path: str = None, history_path: str = None, 
                     risk_config_path: str = None) -> None:
@@ -276,45 +333,14 @@ def run_predictions(input_csv: str, output_csv: str, model_path: str = None,
     df_input = pd.read_csv(input_csv)
     logger.info(f"Loaded input dataset with shape {df_input.shape}")
     
-    # Validate input data
-    validate_input_data(df_input)
-    
-    # Preprocess & Feature Engineering
-    df_engineered = preprocess_and_engineer_features(df_input, history_path=history_path)
-    
-    # Build inputs for the preprocessor
-    feature_cols = config.ENGINEERED_NUMERIC_FEATURES + config.ENGINEERED_CATEGORICAL_FEATURES
-    X_untransformed = df_engineered[feature_cols].copy()
-    
-    # Apply ColumnTransformer
-    logger.info("Applying fitted preprocessing pipeline (scaling and encoding)...")
-    X_processed = preprocessor.transform(X_untransformed)
-    
-    # Predict probabilities and classes
-    logger.info("Generating predictions and probabilities...")
-    if hasattr(model, "predict_proba"):
-        probabilities = model.predict_proba(X_processed)[:, 1]
-    else:
-        logger.warning("Model does not support predict_proba; generating fallback probabilities.")
-        probabilities = model.predict(X_processed).astype(float)
-        
-    predictions = model.predict(X_processed)
-    
-    # Risk scoring configuration
-    risk_cfg = load_risk_config(risk_config_path)
-    low_thresh = risk_cfg["low_risk_threshold"]
-    high_thresh = risk_cfg["high_risk_threshold"]
-    
-    # Map to risk scores and levels
-    risk_scores = calculate_risk_scores(probabilities)
-    risk_levels = categorize_risk(probabilities, low_thresh, high_thresh)
-    
-    # Assemble predictions CSV
-    df_output = df_input.copy()
-    df_output["prediction"] = predictions.astype(int)
-    df_output["probability_score"] = np.round(probabilities, 4)
-    df_output["risk_score"] = risk_scores
-    df_output["risk_level"] = risk_levels
+    # Call core prediction logic
+    df_output = predict_dataframe(
+        df_input=df_input,
+        model=model,
+        preprocessor=preprocessor,
+        history_path=history_path,
+        risk_config_path=risk_config_path
+    )
     
     # Save output
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
@@ -323,7 +349,7 @@ def run_predictions(input_csv: str, output_csv: str, model_path: str = None,
     
     # Compute summary statistics
     total = len(df_output)
-    anomaly_count = int(predictions.sum())
+    anomaly_count = int(df_output["prediction"].sum())
     risk_counts = df_output["risk_level"].value_counts()
     low_count = int(risk_counts.get("Low Risk", 0))
     medium_count = int(risk_counts.get("Medium Risk", 0))
