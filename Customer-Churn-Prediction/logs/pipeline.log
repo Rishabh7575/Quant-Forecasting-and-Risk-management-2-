@@ -1633,3 +1633,97 @@ pandas.errors.EmptyDataError: No columns to parse from file
 2026-08-03 22:56:33,341 - inference - INFO - Loaded input dataset with shape (2, 7)
 2026-08-03 22:56:33,342 - inference - INFO - Starting input data validation...
 2026-08-03 22:56:33,350 - inference - ERROR - DATA VALIDATION FAILED: Detected 1 transactions with invalid amounts (<= 0). Affected transaction IDs: ['TXN9998']...
+2026-08-03 23:00:58,529 - inference - INFO - ============================================================
+2026-08-03 23:00:58,538 - inference - INFO - STARTING BATCH INFERENCE PIPELINE
+2026-08-03 23:00:58,539 - inference - INFO - ============================================================
+2026-08-03 23:00:58,539 - inference - INFO - Loading Model from:        d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\best_model.joblib
+2026-08-03 23:00:58,539 - inference - INFO - Loading Preprocessor from: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\preprocessor.joblib
+2026-08-03 23:00:59,339 - inference - INFO - Successfully loaded ML model and preprocessor artifacts.
+2026-08-03 23:00:59,339 - inference - INFO - Loading input transaction file: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\scratch\test_runs\valid_transactions.csv
+2026-08-03 23:00:59,353 - inference - INFO - Loaded input dataset with shape (20, 7)
+2026-08-03 23:00:59,353 - inference - INFO - Starting input data validation...
+2026-08-03 23:00:59,362 - inference - INFO - Input data validation completed successfully. All constraints satisfied.
+2026-08-03 23:00:59,363 - inference - INFO - Initializing preprocessing and feature engineering...
+2026-08-03 23:00:59,366 - inference - INFO - Loading historical transaction context from: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\processed\transactions_clean.csv
+2026-08-03 23:00:59,418 - inference - INFO - Loaded 10000 historical transactions for context.
+2026-08-03 23:01:03,062 - inference - INFO - Features engineered successfully. Row count matches input: 20
+2026-08-03 23:01:03,068 - inference - INFO - Applying preprocessor transformation...
+2026-08-03 23:01:03,083 - inference - INFO - Generating predictions and probability scores...
+2026-08-03 23:01:03,123 - risk_scoring - INFO - Loaded risk scoring configuration from d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\config\risk_scoring_config.json
+2026-08-03 23:01:03,132 - inference - INFO - Prediction results saved successfully to: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\scratch\test_runs\predictions_output.csv
+2026-08-03 23:01:03,134 - inference - INFO - ============================================================
+2026-08-03 23:01:03,134 - inference - INFO - BATCH INFERENCE PIPELINE SUMMARY
+2026-08-03 23:01:03,134 - inference - INFO - ------------------------------------------------------------
+2026-08-03 23:01:03,134 - inference - INFO - Total Transactions Processed: 20
+2026-08-03 23:01:03,135 - inference - INFO - Anomaly Predictions (Class 1): 0 (0.00%)
+2026-08-03 23:01:03,135 - inference - INFO - Normal Predictions (Class 0):  20 (100.00%)
+2026-08-03 23:01:03,136 - inference - INFO - High Risk Level Cases:         0 (0.00%)
+2026-08-03 23:01:03,136 - inference - INFO - Medium Risk Level Cases:       0 (0.00%)
+2026-08-03 23:01:03,136 - inference - INFO - Low Risk Level Cases:          20 (100.00%)
+2026-08-03 23:01:03,136 - inference - INFO - ============================================================
+2026-08-03 23:01:11,552 - inference - INFO - ============================================================
+2026-08-03 23:01:11,553 - inference - INFO - STARTING BATCH INFERENCE PIPELINE
+2026-08-03 23:01:11,553 - inference - INFO - ============================================================
+2026-08-03 23:01:11,554 - inference - INFO - Loading Model from:        d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\best_model.joblib
+2026-08-03 23:01:11,554 - inference - INFO - Loading Preprocessor from: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\preprocessor.joblib
+2026-08-03 23:01:11,992 - inference - INFO - Successfully loaded ML model and preprocessor artifacts.
+2026-08-03 23:01:11,992 - inference - INFO - Loading input transaction file: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\scratch\test_runs\empty_transactions.csv
+2026-08-03 23:01:12,000 - inference - CRITICAL - UNEXPECTED ERROR RUNNING INFERENCE PIPELINE: No columns to parse from file
+Traceback (most recent call last):
+  File "d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\src\predict.py", line 408, in <module>
+    run_predictions(
+    ~~~~~~~~~~~~~~~^
+        input_csv=args.input,
+        ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        risk_config_path=args.risk_config
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\src\predict.py", line 333, in run_predictions
+    df_input = pd.read_csv(input_csv)
+  File "C:\Users\Rishabh\AppData\Roaming\Python\Python313\site-packages\pandas\io\parsers\readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "C:\Users\Rishabh\AppData\Roaming\Python\Python313\site-packages\pandas\io\parsers\readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "C:\Users\Rishabh\AppData\Roaming\Python\Python313\site-packages\pandas\io\parsers\readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Rishabh\AppData\Roaming\Python\Python313\site-packages\pandas\io\parsers\readers.py", line 1898, in _make_engine
+    return mapping[engine](f, **self.options)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rishabh\AppData\Roaming\Python\Python313\site-packages\pandas\io\parsers\c_parser_wrapper.py", line 93, in __init__
+    self._reader = parsers.TextReader(src, **kwds)
+                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "pandas/_libs/parsers.pyx", line 581, in pandas._libs.parsers.TextReader.__cinit__
+pandas.errors.EmptyDataError: No columns to parse from file
+2026-08-03 23:01:19,835 - inference - INFO - ============================================================
+2026-08-03 23:01:19,835 - inference - INFO - STARTING BATCH INFERENCE PIPELINE
+2026-08-03 23:01:19,835 - inference - INFO - ============================================================
+2026-08-03 23:01:19,835 - inference - INFO - Loading Model from:        d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\best_model.joblib
+2026-08-03 23:01:19,835 - inference - INFO - Loading Preprocessor from: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\preprocessor.joblib
+2026-08-03 23:01:20,202 - inference - INFO - Successfully loaded ML model and preprocessor artifacts.
+2026-08-03 23:01:20,202 - inference - INFO - Loading input transaction file: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\scratch\test_runs\missing_col_transactions.csv
+2026-08-03 23:01:20,208 - inference - INFO - Loaded input dataset with shape (1, 6)
+2026-08-03 23:01:20,209 - inference - INFO - Starting input data validation...
+2026-08-03 23:01:20,209 - inference - ERROR - DATA VALIDATION FAILED: Missing required columns in input CSV: ['amount']
+2026-08-03 23:01:25,658 - inference - INFO - ============================================================
+2026-08-03 23:01:25,659 - inference - INFO - STARTING BATCH INFERENCE PIPELINE
+2026-08-03 23:01:25,659 - inference - INFO - ============================================================
+2026-08-03 23:01:25,659 - inference - INFO - Loading Model from:        d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\best_model.joblib
+2026-08-03 23:01:25,659 - inference - INFO - Loading Preprocessor from: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\preprocessor.joblib
+2026-08-03 23:01:25,955 - inference - INFO - Successfully loaded ML model and preprocessor artifacts.
+2026-08-03 23:01:25,955 - inference - INFO - Loading input transaction file: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\scratch\test_runs\bad_type_transactions.csv
+2026-08-03 23:01:25,962 - inference - INFO - Loaded input dataset with shape (2, 7)
+2026-08-03 23:01:25,963 - inference - INFO - Starting input data validation...
+2026-08-03 23:01:25,964 - inference - ERROR - DATA VALIDATION FAILED: Column 'amount' contains non-numeric values. First few invalid values: [(1, 'one hundred dollars')]
+2026-08-03 23:01:31,209 - inference - INFO - ============================================================
+2026-08-03 23:01:31,209 - inference - INFO - STARTING BATCH INFERENCE PIPELINE
+2026-08-03 23:01:31,209 - inference - INFO - ============================================================
+2026-08-03 23:01:31,209 - inference - INFO - Loading Model from:        d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\best_model.joblib
+2026-08-03 23:01:31,209 - inference - INFO - Loading Preprocessor from: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\preprocessor.joblib
+2026-08-03 23:01:31,491 - inference - INFO - Successfully loaded ML model and preprocessor artifacts.
+2026-08-03 23:01:31,491 - inference - INFO - Loading input transaction file: d:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\scratch\test_runs\invalid_val_transactions.csv
+2026-08-03 23:01:31,496 - inference - INFO - Loaded input dataset with shape (2, 7)
+2026-08-03 23:01:31,496 - inference - INFO - Starting input data validation...
+2026-08-03 23:01:31,500 - inference - ERROR - DATA VALIDATION FAILED: Detected 1 transactions with invalid amounts (<= 0). Affected transaction IDs: ['TXN9998']...
