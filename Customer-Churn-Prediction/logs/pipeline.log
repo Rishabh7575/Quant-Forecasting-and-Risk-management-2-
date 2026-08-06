@@ -1727,3 +1727,33 @@ pandas.errors.EmptyDataError: No columns to parse from file
 2026-08-03 23:01:31,496 - inference - INFO - Loaded input dataset with shape (2, 7)
 2026-08-03 23:01:31,496 - inference - INFO - Starting input data validation...
 2026-08-03 23:01:31,500 - inference - ERROR - DATA VALIDATION FAILED: Detected 1 transactions with invalid amounts (<= 0). Affected transaction IDs: ['TXN9998']...
+2026-08-07 00:01:48,493 - inference - INFO - ============================================================
+2026-08-07 00:01:48,495 - inference - INFO - STARTING BATCH INFERENCE PIPELINE
+2026-08-07 00:01:48,495 - inference - INFO - ============================================================
+2026-08-07 00:01:48,495 - inference - INFO - Loading Model from:        D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\best_model.joblib
+2026-08-07 00:01:48,496 - inference - INFO - Loading Preprocessor from: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\models\preprocessor.joblib
+2026-08-07 00:01:52,663 - inference - INFO - Successfully loaded ML model and preprocessor artifacts.
+2026-08-07 00:01:52,663 - inference - INFO - Loading input transaction file: data/raw/transactions.csv
+2026-08-07 00:01:52,767 - inference - INFO - Loaded input dataset with shape (10000, 8)
+2026-08-07 00:01:52,768 - inference - INFO - Starting input data validation...
+2026-08-07 00:01:52,788 - inference - INFO - Input data validation completed successfully. All constraints satisfied.
+2026-08-07 00:01:52,788 - inference - INFO - Initializing preprocessing and feature engineering...
+2026-08-07 00:01:52,791 - inference - INFO - Loading historical transaction context from: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\data\processed\transactions_clean.csv
+2026-08-07 00:01:52,837 - inference - INFO - Loaded 10000 historical transactions for context.
+2026-08-07 00:01:55,194 - inference - INFO - Features engineered successfully. Row count matches input: 10000
+2026-08-07 00:01:55,205 - inference - INFO - Applying preprocessor transformation...
+2026-08-07 00:01:55,229 - inference - INFO - Generating predictions and probability scores...
+2026-08-07 00:01:55,317 - risk_scoring - INFO - Loaded risk scoring configuration from D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\config\risk_scoring_config.json
+2026-08-07 00:01:55,384 - inference - INFO - Prediction results saved successfully to: reports/test_predictions.csv
+2026-08-07 00:01:55,384 - inference - INFO - Automatically generating business risk report...
+2026-08-07 00:01:57,902 - inference - INFO - Business PDF report generated successfully at: D:\AntiGravity Projects\Customer Churn\Customer-Churn-Prediction\reports\pdf_reports\risk_report_20260807_000155.pdf
+2026-08-07 00:01:57,907 - inference - INFO - ============================================================
+2026-08-07 00:01:57,907 - inference - INFO - BATCH INFERENCE PIPELINE SUMMARY
+2026-08-07 00:01:57,908 - inference - INFO - ------------------------------------------------------------
+2026-08-07 00:01:57,908 - inference - INFO - Total Transactions Processed: 10000
+2026-08-07 00:01:57,908 - inference - INFO - Anomaly Predictions (Class 1): 187 (1.87%)
+2026-08-07 00:01:57,908 - inference - INFO - Normal Predictions (Class 0):  9813 (98.13%)
+2026-08-07 00:01:57,908 - inference - INFO - High Risk Level Cases:         187 (1.87%)
+2026-08-07 00:01:57,908 - inference - INFO - Medium Risk Level Cases:       3 (0.03%)
+2026-08-07 00:01:57,908 - inference - INFO - Low Risk Level Cases:          9810 (98.10%)
+2026-08-07 00:01:57,908 - inference - INFO - ============================================================
