@@ -69,6 +69,8 @@ RISK_SUMMARY_PATH = os.path.join(BASE_DIR, "reports", "risk_summary.json")
 # Reports & Figure Directories
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 FIGURES_DIR = os.path.join(REPORTS_DIR, "figures")
+PDF_REPORTS_DIR = os.path.join(REPORTS_DIR, "pdf_reports")
+
 
 # Logging Configuration
 LOGS_DIR = os.path.join(BASE_DIR, "logs")

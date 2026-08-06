@@ -32,6 +32,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from src import config
 from src.predict import predict_dataframe, ValidationError
+from src.report_generator import generate_pdf_report, generate_recommendations
 
 st.set_page_config(
     page_title="Financial Transaction Anomaly Engine Dashboard",
@@ -235,6 +236,17 @@ elif page == "Batch Prediction Engine":
                             
                             st.success("✅ Batch Anomaly Detection Completed Successfully!")
                             
+                            # Generate business PDF report
+                            pdf_path = None
+                            with st.spinner("Generating business PDF risk report..."):
+                                try:
+                                    pdf_path = generate_pdf_report(
+                                        df_predictions=results_df,
+                                        model_name=model_name
+                                    )
+                                except Exception as re:
+                                    st.warning(f"Could not generate PDF report: {re}")
+                            
                             # KPI Metrics
                             total_txns = len(results_df)
                             anomalies = int(results_df["prediction"].sum())
@@ -261,14 +273,46 @@ elif page == "Batch Prediction Engine":
                                     delta_color="inverse"
                                 )
                                 
-                            # Download prediction results
-                            csv_data = results_df.to_csv(index=False).encode('utf-8')
-                            st.download_button(
-                                label="📥 Download Risk Assessment CSV",
-                                data=csv_data,
-                                file_name="batch_transaction_risk_predictions.csv",
-                                mime="text/csv"
-                            )
+                            # Download prediction results & PDF report
+                            col_csv, col_pdf = st.columns(2)
+                            with col_csv:
+                                csv_data = results_df.to_csv(index=False).encode('utf-8')
+                                st.download_button(
+                                    label="📥 Download Risk Assessment CSV",
+                                    data=csv_data,
+                                    file_name="batch_transaction_risk_predictions.csv",
+                                    mime="text/csv",
+                                    use_container_width=True
+                                )
+                            with col_pdf:
+                                if pdf_path and os.path.exists(pdf_path):
+                                    with open(pdf_path, "rb") as f:
+                                        pdf_bytes = f.read()
+                                    st.download_button(
+                                        label="📥 Download Business PDF Report",
+                                        data=pdf_bytes,
+                                        file_name=os.path.basename(pdf_path),
+                                        mime="application/pdf",
+                                        use_container_width=True
+                                    )
+                                else:
+                                    st.info("PDF report generation pending or failed.")
+                                    
+                            # Business Insights & Recommendations Section
+                            st.subheader("💡 Business Insights & Actionable Recommendations")
+                            pct_high = (results_df["risk_level"] == "High Risk").mean() * 100
+                            avg_risk = results_df["risk_score"].mean()
+                            anom_mask = results_df["prediction"] == 1
+                            avg_conf_anom = results_df[anom_mask]["probability_score"].mean() if anom_mask.any() else 0.0
+                            
+                            recs = generate_recommendations(pct_high, avg_risk, avg_conf_anom)
+                            for r in recs:
+                                if r["level"] == "High Priority":
+                                    st.error(f"🔴 **[CRITICAL] {r['title']}**\n\n{r['description']}")
+                                elif r["level"] == "Medium Priority":
+                                    st.warning(f"🟡 **[WARNING] {r['title']}**\n\n{r['description']}")
+                                else:
+                                    st.success(f"🟢 **[INFO] {r['title']}**\n\n{r['description']}")
                             
                             # Prediction Table Details
                             st.subheader("Risk Assessment Results Table")

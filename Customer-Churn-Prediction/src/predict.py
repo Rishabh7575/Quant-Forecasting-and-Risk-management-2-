@@ -21,6 +21,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src import config
 from src.utils import setup_logger, load_dataset
 from src.risk_scoring import load_risk_config, categorize_risk, calculate_risk_scores
+from src.report_generator import generate_pdf_report
 
 logger = setup_logger("inference")
 
@@ -346,6 +347,17 @@ def run_predictions(input_csv: str, output_csv: str, model_path: str = None,
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
     df_output.to_csv(output_csv, index=False)
     logger.info(f"Prediction results saved successfully to: {output_csv}")
+    
+    # Generate business PDF report
+    try:
+        logger.info("Automatically generating business risk report...")
+        pdf_path = generate_pdf_report(
+            df_predictions=df_output,
+            model_name=model_file
+        )
+        logger.info(f"Business PDF report generated successfully at: {pdf_path}")
+    except Exception as re:
+        logger.error(f"Failed to generate business PDF report: {re}", exc_info=True)
     
     # Compute summary statistics
     total = len(df_output)
